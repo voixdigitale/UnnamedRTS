@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Events;
+using Random = UnityEngine.Random;
 
 public enum UnitState
 {
@@ -22,6 +23,7 @@ public class Unit : MonoBehaviour
     [SerializeField] private GameObject weapon;
 
     [Header("Gatherer")]
+    public float moveSpeed = 3.5f;
     public float gatherAmount = 10f;
     public float gatherRate = 1f;
     public float lastGatherTime = 0f;
@@ -37,6 +39,7 @@ public class Unit : MonoBehaviour
     void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
+        agent.speed = moveSpeed;
     }
 
     void SetState(UnitState newState)
@@ -80,6 +83,7 @@ public class Unit : MonoBehaviour
     {
         if (Vector3.Distance(transform.position, agent.destination) == 0f)
         {
+            agent.speed = moveSpeed;
             SetState(UnitState.Idle);
         }
     }
@@ -119,6 +123,7 @@ public class Unit : MonoBehaviour
     public void Move(Vector3 destination)
     {
         agent.isStopped = false;
+        agent.speed = Random.Range(agent.speed - 0.1f, agent.speed + 0.1f); //Add a bit of randomness to the speed
         agent.SetDestination(destination);
 
         SetState(UnitState.Moving);

@@ -34,7 +34,7 @@ public class UnitCommands : MonoBehaviour
         {
             if (hit.collider.gameObject.CompareTag("Ground"))
             {
-                MoveUnits(hit);
+                StartCoroutine(MoveUnits(hit));
             }
             else if (hit.collider.gameObject.CompareTag("Resource"))
             {
@@ -44,7 +44,7 @@ public class UnitCommands : MonoBehaviour
         }
     }
 
-    void MoveUnits(RaycastHit hit)
+    IEnumerator MoveUnits(RaycastHit hit)
     {
         List<Vector3> destinations = UnitMovement.GetGroupDestinations(hit.point, unitSelection.selectedUnits.Count, 1f);
 
@@ -54,6 +54,9 @@ public class UnitCommands : MonoBehaviour
 
             SpawnSelectionMarker(destination);
 
+            //Adding a bit of randomness to the movement
+            yield return new WaitForSeconds(Random.Range(0, 30) / 100);
+            
             unit.Move(destination);
         }
     }

@@ -1,6 +1,4 @@
-using System.Collections;
 using System.Collections.Generic;
-using System.Security.Cryptography.X509Certificates;
 using UnityEngine;
 
 public class UnitMovement : MonoBehaviour
@@ -21,7 +19,10 @@ public class UnitMovement : MonoBehaviour
 
         for (int i = 0; i < numUnits; i++)
         {
-            destinations.Add(new Vector3(moveToPos.x - width / 2 + col * unitGap, moveToPos.y, moveToPos.z - length / 2 + row * unitGap));
+            Vector3 destination = new Vector3(moveToPos.x - width / 2 + col * unitGap, moveToPos.y, moveToPos.z - length / 2 + row * unitGap);
+            destination += PlacementNoise(destination, 0.5f);
+
+            destinations.Add(destination);
 
             col++;
 
@@ -50,5 +51,10 @@ public class UnitMovement : MonoBehaviour
         }
 
         return destinations;
+    }
+
+    public static Vector3 PlacementNoise(Vector3 pos, float noiseLevel) {
+        var noise = Mathf.PerlinNoise(pos.x * noiseLevel, pos.z * noiseLevel);
+        return new Vector3(noise, 0, noise);
     }
 }
