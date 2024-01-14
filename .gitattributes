@@ -1,0 +1,6 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+*.fbx filter=lfs diff=lfs merge=lfs -text
+Assets/PolygonBattleRoyale/** filter=lfs diff=lfs merge=lfs -text
+Assets/PolygonNature/** filter=lfs diff=lfs merge=lfs -text
+Assets/Blink/** filter=lfs diff=lfs merge=lfs -text
