@@ -12,12 +12,12 @@ public class ResourceUI : MonoBehaviour
 
     void OnEnable()
     {
-        Resource.OnResourceCollected += HandleOnResourceCollected;
+        Resource.OnResourceHarvested += HandleOnResourceCollected;
     }
 
     void OnDisable()
     {
-        Resource.OnResourceCollected -= HandleOnResourceCollected;
+        Resource.OnResourceHarvested -= HandleOnResourceCollected;
     }
 
     void Awake()

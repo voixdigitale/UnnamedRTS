@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.Events;
 
 public enum ResourceType {
+    None,
     Wood,
     Scrap
 }
@@ -12,9 +13,9 @@ public abstract class Resource : MonoBehaviour
     protected ResourceType type;
     public float quantity { get; protected set; }
 
-    public static event Action OnResourceCollected;
+    public static event Action OnResourceHarvested;
 
-    public void Collect(float amount, Player targetPlayer)
+    public void Collect(float amount, Unit targetUnit)
     {
         quantity -= amount;
 
@@ -23,11 +24,12 @@ public abstract class Resource : MonoBehaviour
         if (quantity < 0)
             amountToGive = amount + quantity;
 
-        targetPlayer.AddResource(type, (int)amountToGive);
+        targetUnit.backpackResource = type;
+        targetUnit.backpackQuantity += (int)amountToGive;
 
         if (quantity <= 0)
             Destroy(gameObject);
 
-        OnResourceCollected?.Invoke();
+        OnResourceHarvested?.Invoke();
     }
 }

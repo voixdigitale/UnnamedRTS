@@ -6,19 +6,26 @@ using UnityEngine;
 public class PlayerUI : MonoBehaviour
 {
     public Player player;
+
+    [Header("Resources")]
     public TextMeshProUGUI woodText;
     public TextMeshProUGUI scrapText;
     public TextMeshProUGUI unitText;
 
+    [Header("Action Buttons")]
+    public GameObject buildMenu;
+
 
     void OnEnable()
     {
-        Resource.OnResourceCollected += HandleOnResourceCollected;
+        Player.OnResourceCollected += HandleOnResourceCollected;
+        SelectionManager.OnSelectionChanged += HandleOnSelectionChanged;
     }
 
     void OnDisable()
     {
-        Resource.OnResourceCollected -= HandleOnResourceCollected;
+        Player.OnResourceCollected -= HandleOnResourceCollected;
+        SelectionManager.OnSelectionChanged -= HandleOnSelectionChanged;
     }
 
     void Start()
@@ -31,5 +38,13 @@ public class PlayerUI : MonoBehaviour
     {
         woodText.text = player.GetResource(ResourceType.Wood).ToString();
         scrapText.text = player.GetResource(ResourceType.Scrap).ToString();
+    }
+
+    void HandleOnSelectionChanged(ISelectable? selection) {
+        if (selection == null) {
+            buildMenu.SetActive(false);
+        } else {
+            buildMenu.SetActive(true);
+        }
     }
 }

@@ -1,19 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class Player : MonoBehaviour
 {
+    public static event Action OnResourceCollected;
+
     [Header("Units")]
     public List<Unit> units = new List<Unit>();
     public List<Building> buildings = new List<Building>();
 
     private int wood, scrap;
-
-    public bool IsPlayerUnit(Unit unit)
-    {
-        return units.Contains(unit);
-    }
 
     public void AddResource(ResourceType type, int amount)
     {
@@ -26,6 +24,7 @@ public class Player : MonoBehaviour
                 scrap += amount;
                 break;
         }
+        OnResourceCollected?.Invoke();
     }
 
     public int GetResource(ResourceType type)

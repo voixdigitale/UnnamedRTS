@@ -8,11 +8,11 @@ public class UnitCommands : MonoBehaviour
     public GameObject selectionMarkerPrefab;
     public LayerMask layerMask;
 
-    private UnitSelection unitSelection;
+    private SelectionManager unitSelection;
     private Camera camera;
 
     void Awake() {
-        unitSelection = GetComponent<UnitSelection>();
+        unitSelection = GetComponent<SelectionManager>();
         camera = Camera.main;
     }
 
@@ -46,9 +46,9 @@ public class UnitCommands : MonoBehaviour
 
     IEnumerator MoveUnits(RaycastHit hit)
     {
-        List<Vector3> destinations = UnitMovement.GetGroupDestinations(hit.point, unitSelection.selectedUnits.Count, 1f);
+        List<Vector3> destinations = UnitMovement.GetGroupDestinations(hit.point, unitSelection.currentSelection.Count, 1f);
 
-        foreach (Unit unit in unitSelection.selectedUnits) {
+        foreach (Unit unit in unitSelection.currentSelection.OfType<Unit>()) {
             Vector3 destination = destinations.First();
             destinations.Remove(destination);
 
@@ -65,9 +65,9 @@ public class UnitCommands : MonoBehaviour
     {
         SpawnSelectionMarker(resource.transform.position, 2f);
 
-        List<Vector3> destinations = UnitMovement.GetSurroundingDestinations(resource.transform.position, unitSelection.selectedUnits.Count);
+        List<Vector3> destinations = UnitMovement.GetSurroundingDestinations(resource.transform.position, unitSelection.currentSelection.Count);
 
-        foreach (Unit unit in unitSelection.selectedUnits)
+        foreach (Unit unit in unitSelection.currentSelection.OfType<Unit>())
         {
             Vector3 destination = destinations.First();
             destinations.Remove(destination);

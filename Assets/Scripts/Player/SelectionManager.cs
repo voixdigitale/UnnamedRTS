@@ -1,13 +1,18 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
-public class UnitSelection : MonoBehaviour
+public class SelectionManager : MonoBehaviour
 {
+    public static event Action<ISelectable?> OnSelectionChanged;
+    public static SelectionManager Instance { get; private set; }
+
     [SerializeField] private LayerMask unitLayerMask;
     [SerializeField] private RectTransform selectionBox;
 
-    [HideInInspector] public List<Unit> selectedUnits = new List<Unit>();
+    [HideInInspector] public List<ISelectable> currentSelection = new List<ISelectable>();
     private Vector2 selectionStartPos;
 
     private Camera camera;
@@ -17,6 +22,13 @@ public class UnitSelection : MonoBehaviour
     {
         camera = Camera.main;
         player = GetComponent<Player>();
+
+        if (Instance != null) {
+            Destroy(gameObject);
+            return;
+        }
+
+        Instance = this;
     }
 
     void Update()
@@ -24,7 +36,7 @@ public class UnitSelection : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             
-            DeselectAllUnits();
+            DeselectAll();
 
             SelectUnit();
 
@@ -55,10 +67,21 @@ public class UnitSelection : MonoBehaviour
 
             if (screenPos.x > min.x && screenPos.x < max.x && screenPos.y > min.y && screenPos.y < max.y)
             {
-                selectedUnits.Add(unit);
+                currentSelection.Add(unit);
                 unit.Select();
             }
         }
+
+        foreach (Building building in player.buildings) {
+            Vector3 screenPos = camera.WorldToScreenPoint(building.transform.position);
+
+            if (screenPos.x > min.x && screenPos.x < max.x && screenPos.y > min.y && screenPos.y < max.y) {
+                currentSelection.Add(building);
+                building.Select();
+            }
+        }
+
+        OnSelectionChanged?.Invoke(currentSelection.Count > 0 ? currentSelection[0] : null);
     }
 
     void UpdateSelectionBox(Vector2 currentMousePosition)
@@ -82,36 +105,34 @@ public class UnitSelection : MonoBehaviour
 
         if (Physics.Raycast(ray, out hit, Mathf.Infinity, unitLayerMask)) {
 
-            Unit unit = hit.collider.GetComponent<Unit>();
-            
-            if (unit != null && unit.player == player) {
-                
-                if (player.IsPlayerUnit(unit)) {
-                    selectedUnits.Add(unit);
-                    unit.Select();
-                }
+            ISelectable selection = hit.collider.GetComponent<ISelectable>();
+
+            if (selection != null && selection.BelongsToPlayer(player)) {
+                currentSelection.Add(selection);
+                selection.Select();
             }
         }
         else
         {
-            DeselectAllUnits();
+            DeselectAll();
         }
 
+        OnSelectionChanged?.Invoke(currentSelection.Count > 0 ? currentSelection[0] : null);
     }
 
-    void DeselectAllUnits()
+    void DeselectAll()
     {
         if (!Input.GetKey(KeyCode.LeftShift))
         {
-            foreach (Unit unit in selectedUnits)
+            foreach (ISelectable selected in currentSelection)
             {
-                unit.Deselect();
+                selected.Deselect();
             }
 
-            selectedUnits.Clear();
+            currentSelection.Clear();
         }
     }
 
-    public bool HasUnitsSelected() => selectedUnits.Count > 0;
+    public bool HasUnitsSelected() => currentSelection.Count > 0;
 
 }

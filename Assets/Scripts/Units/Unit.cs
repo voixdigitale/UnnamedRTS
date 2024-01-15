@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Events;
+using UnityEngine.Rendering;
 using Random = UnityEngine.Random;
 
 public enum UnitState
@@ -10,17 +11,19 @@ public enum UnitState
     Moving,
     MovingToGather,
     MovingToAttack,
+    MovingToBase,
     Attacking,
     Gathering
 }
 
 
-public class Unit : MonoBehaviour
+public class Unit : MonoBehaviour, ISelectable
 {
     public event Action<UnitState> OnStateChanged;
 
     [SerializeField] private GameObject selectionCircle;
     [SerializeField] private GameObject weapon;
+    [SerializeField] private GameObject backpack;
 
     [Header("Gatherer")]
     public float moveSpeed = 3.5f;
@@ -28,13 +31,20 @@ public class Unit : MonoBehaviour
     public float gatherRate = 1f;
     public float lastGatherTime = 0f;
     public int unitCost = 10;
+    public ResourceType backpackResource = ResourceType.None;
+    public int backpackQuantity = 0;
+    public Building homeBase;
     public ResourceType unitCostResource = ResourceType.Wood;
 
-    public Player player;
+    [field: SerializeField]
+    public Player player { get; private set;}
+
     public UnitState state = UnitState.Idle;
 
     private NavMeshAgent agent;
     private Resource currentResource;
+    private Resource previousResource;
+    private Vector3 previousDestination;
 
     void Awake()
     {
@@ -88,6 +98,7 @@ public class Unit : MonoBehaviour
         }
     }
 
+
     void MovingToGatherUpdate()
     {
         if (currentResource == null)
@@ -98,7 +109,9 @@ public class Unit : MonoBehaviour
 
         if (Vector3.Distance(transform.position, agent.destination) == 0f) {
             weapon.SetActive(true);
+            backpack.SetActive(false);
             SetState(UnitState.Gathering);
+            lastGatherTime = Time.time;
         }
     }
 
@@ -116,7 +129,13 @@ public class Unit : MonoBehaviour
         if (Time.time - lastGatherTime > gatherRate)
         {
             lastGatherTime = Time.time;
-            currentResource.Collect(gatherAmount, player);
+            currentResource.Collect(gatherAmount, this);
+            previousDestination = agent.destination;
+            previousResource = currentResource;
+            agent.destination = homeBase.GetEntrance();
+            weapon.SetActive(false);
+            backpack.SetActive(true);
+            SetState(UnitState.MovingToBase);
         }
     }
 
@@ -135,7 +154,14 @@ public class Unit : MonoBehaviour
         
         agent.isStopped = false;
         agent.SetDestination(destination);
-        
+
         SetState(UnitState.MovingToGather);
+    }
+    public void UnloadBackPack() {
+        player.AddResource(backpackResource, backpackQuantity);
+        backpackResource = ResourceType.None;
+        backpackQuantity = 0;
+        backpack.SetActive(false);
+        Gather(previousResource, previousDestination);
     }
 }

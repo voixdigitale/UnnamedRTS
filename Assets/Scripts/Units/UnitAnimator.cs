@@ -10,14 +10,17 @@ public class UnitAnimator : MonoBehaviour
     private NavMeshAgent agent;
     private Unit unit;
 
+    void OnEnable() {
+        unit.OnStateChanged += HandleStateChanged;
+    }
+
     void Awake()
     {
         animator = GetComponent<Animator>();
         agent = GetComponent<NavMeshAgent>();
         unit = GetComponent<Unit>();
-
-        unit.OnStateChanged += HandleStateChanged;
     }
+
 
     void OnDisable() {
         unit.OnStateChanged -= HandleStateChanged;
@@ -39,6 +42,10 @@ public class UnitAnimator : MonoBehaviour
                 animator.SetBool("IsGathering", false);
                 break;
             case UnitState.MovingToGather:
+                animator.SetBool("IsGathering", false);
+                break;
+            
+            case UnitState.MovingToBase:
                 animator.SetBool("IsGathering", false);
                 break;
             case UnitState.MovingToAttack:
