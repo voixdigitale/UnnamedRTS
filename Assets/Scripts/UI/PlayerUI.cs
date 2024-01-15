@@ -40,6 +40,7 @@ public class PlayerUI : MonoBehaviour
         scrapText.text = player.GetResource(ResourceType.Scrap).ToString();
     }
 
+    #nullable enable
     void HandleOnSelectionChanged(ISelectable? selection) {
         if (selection == null) {
             buildMenu.SetActive(false);
@@ -47,4 +48,5 @@ public class PlayerUI : MonoBehaviour
             buildMenu.SetActive(true);
         }
     }
+    #nullable disable
 }

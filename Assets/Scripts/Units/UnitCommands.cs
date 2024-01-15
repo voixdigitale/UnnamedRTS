@@ -9,7 +9,7 @@ public class UnitCommands : MonoBehaviour
     public LayerMask layerMask;
 
     private SelectionManager unitSelection;
-    private Camera camera;
+    private new Camera camera;
 
     void Awake() {
         unitSelection = GetComponent<SelectionManager>();
@@ -67,7 +67,7 @@ public class UnitCommands : MonoBehaviour
 
         List<Vector3> destinations = UnitMovement.GetSurroundingDestinations(resource.transform.position, unitSelection.currentSelection.Count);
 
-        foreach (Unit unit in unitSelection.currentSelection.OfType<Unit>())
+        foreach (Gatherer unit in unitSelection.currentSelection.OfType<Gatherer>())
         {
             Vector3 destination = destinations.First();
             destinations.Remove(destination);

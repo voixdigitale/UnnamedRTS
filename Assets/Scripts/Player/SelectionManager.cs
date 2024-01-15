@@ -6,7 +6,10 @@ using UnityEngine;
 
 public class SelectionManager : MonoBehaviour
 {
-    public static event Action<ISelectable?> OnSelectionChanged;
+    #nullable enable
+    public static event Action<ISelectable?>? OnSelectionChanged;
+    #nullable disable
+
     public static SelectionManager Instance { get; private set; }
 
     [SerializeField] private LayerMask unitLayerMask;
@@ -15,7 +18,7 @@ public class SelectionManager : MonoBehaviour
     [HideInInspector] public List<ISelectable> currentSelection = new List<ISelectable>();
     private Vector2 selectionStartPos;
 
-    private Camera camera;
+    private new Camera camera;
     private Player player;
 
     void Awake()

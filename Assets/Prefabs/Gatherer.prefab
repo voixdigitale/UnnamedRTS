@@ -203,13 +203,14 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8749857910578539787}
+  - component: {fileID: -6757134133438131462}
+  - component: {fileID: 7336460892854443850}
+  - component: {fileID: 3914999180473160570}
   - component: {fileID: 991574602433037439}
   - component: {fileID: 9097388522080343263}
-  - component: {fileID: 3546420101047448047}
-  - component: {fileID: 3914999180473160570}
-  - component: {fileID: 7336460892854443850}
+  - component: {fileID: 2050219591850994292}
   m_Layer: 6
-  m_Name: Unit
+  m_Name: Gatherer
   m_TagString: Unit
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -232,6 +233,59 @@ Transform:
   - {fileID: 2959231031325953483}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &-6757134133438131462
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1096112807828452666}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e8ff12ea578b084cbd5d57dbc9fbbe5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <player>k__BackingField: {fileID: 0}
+  homeBase: {fileID: 0}
+  selectionCircle: {fileID: 1324919256352831265}
+  weapon: {fileID: 7685711279358921162}
+  unitData: {fileID: 11400000, guid: c3dc37708b1f612479a13c73af55d0cc, type: 2}
+  backpackResource: 0
+  backpackQuantity: 0
+  backpack: {fileID: 70618407216246093}
+--- !u!114 &7336460892854443850
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1096112807828452666}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5159e5e3d4eb6dc40a95663dd844787f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!95 &3914999180473160570
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1096112807828452666}
+  m_Enabled: 1
+  m_Avatar: {fileID: 9000000, guid: 0045ffb477e043a46950af7e617beb06, type: 3}
+  m_Controller: {fileID: 9100000, guid: 7299b257a98affd4cbc065f9657e67ae, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!195 &991574602433037439
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -277,65 +331,33 @@ CapsuleCollider:
   m_Height: 1.8
   m_Direction: 1
   m_Center: {x: 0, y: 0.9, z: 0}
---- !u!114 &3546420101047448047
-MonoBehaviour:
+--- !u!54 &2050219591850994292
+Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1096112807828452666}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a92e0062e732a9c47b201735644ef4e6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  selectionCircle: {fileID: 1324919256352831265}
-  weapon: {fileID: 7685711279358921162}
-  backpack: {fileID: 70618407216246093}
-  moveSpeed: 3.5
-  gatherAmount: 10
-  gatherRate: 1.6
-  lastGatherTime: 0
-  unitCost: 10
-  backpackResource: 0
-  backpackQuantity: 0
-  homeBase: {fileID: 0}
-  unitCostResource: 1
-  <player>k__BackingField: {fileID: 0}
-  state: 0
---- !u!95 &3914999180473160570
-Animator:
-  serializedVersion: 5
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1096112807828452666}
-  m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: 0045ffb477e043a46950af7e617beb06, type: 3}
-  m_Controller: {fileID: 9100000, guid: 7299b257a98affd4cbc065f9657e67ae, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
---- !u!114 &7336460892854443850
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1096112807828452666}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5159e5e3d4eb6dc40a95663dd844787f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &1189001923945647673
 GameObject:
   m_ObjectHideFlags: 0

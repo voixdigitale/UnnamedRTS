@@ -2,23 +2,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CameraController : MonoBehaviour
-{
+public class CameraController : MonoBehaviour {
     public float moveSpeed = 10f;
     public float zoomSpeed = 20f;
 
     public float minZoom = 5f;
     public float maxZoom = 200f;
 
-    private Camera camera;
+    private new Camera camera;
 
-    void Awake()
-    {
+    void Awake() {
         camera = Camera.main;
     }
 
-    void MoveCamera()
-    {
+    void MoveCamera() {
         float horizontal = Input.GetAxis("Horizontal");
         float vertical = Input.GetAxis("Vertical");
 
@@ -29,8 +26,7 @@ public class CameraController : MonoBehaviour
         transform.position = position;
     }
 
-    void ZoomCamera()
-    {
+    void ZoomCamera() {
         float zoom = Input.GetAxis("Mouse ScrollWheel");
 
         Vector3 position = camera.transform.position;
@@ -40,11 +36,8 @@ public class CameraController : MonoBehaviour
         camera.transform.position = position;
     }
 
-    void Update()
-    {
+    void Update() {
         MoveCamera();
         ZoomCamera();
     }
-
-
 }

@@ -12,10 +12,10 @@ public class Building : MonoBehaviour, ISelectable
     [field: SerializeField]
     public Player player { get; private set; }
 
-    private List<Unit> unitsInside = new List<Unit>();
+    private List<Gatherer> unitsInside = new List<Gatherer>();
     private List<float> timesOfArrival = new List<float>();
 
-    void StoreUnit(Unit unit) {
+    void StoreUnit(Gatherer unit) {
         unitsInside.Add(unit);
         timesOfArrival.Add(Time.time);
         unit.gameObject.SetActive(false);
@@ -39,7 +39,7 @@ public class Building : MonoBehaviour, ISelectable
     }
 
     private void OnTriggerEnter(Collider other) {
-        Unit unit = other.GetComponent<Unit>();
+        Gatherer unit = other.GetComponent<Gatherer>();
 
         if (unit != null) {
             StoreUnit(unit);

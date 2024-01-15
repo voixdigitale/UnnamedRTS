@@ -15,7 +15,7 @@ public abstract class Resource : MonoBehaviour
 
     public static event Action OnResourceHarvested;
 
-    public void Collect(float amount, Unit targetUnit)
+    public void Collect(float amount, Gatherer targetUnit)
     {
         quantity -= amount;
 
