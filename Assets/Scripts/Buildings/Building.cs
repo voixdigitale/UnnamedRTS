@@ -8,6 +8,7 @@ public class Building : MonoBehaviour, ISelectable
     [SerializeField] private Transform entrancePos;
     [SerializeField] private float unloadTime = 1f;
     [SerializeField] private GameObject selectionCircle;
+    [SerializeField] private List<UnitSO> unitsToSpawn;
 
     [field: SerializeField]
     public Player player { get; private set; }

@@ -10,6 +10,9 @@ public class UnitCommands : MonoBehaviour
 
     private SelectionManager unitSelection;
     private new Camera camera;
+    private bool awaitingForMovePosition = false;
+
+    public bool AwaitingForMovePosition => awaitingForMovePosition;
 
     void Awake() {
         unitSelection = GetComponent<SelectionManager>();
@@ -18,10 +21,43 @@ public class UnitCommands : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetMouseButtonDown(1) && unitSelection.HasUnitsSelected())
-        {
-            MouseCommands();
+        if (awaitingForMovePosition) {
+            if (Input.GetMouseButtonDown(0) && unitSelection.HasUnitsSelected()) {
+
+                Ray ray = camera.ScreenPointToRay(Input.mousePosition);
+                RaycastHit hit;
+
+                if (Physics.Raycast(ray, out hit, Mathf.Infinity, layerMask)) {
+                    if (hit.collider.gameObject.CompareTag("Ground")) {
+                        StartCoroutine(MoveUnits(hit));
+                    }
+                }
+            }
+
+            if (Input.GetMouseButtonUp(0)) {
+                awaitingForMovePosition = false;
+            }
+
+        } else {
+            if (Input.GetMouseButtonDown(0)) {
+                SelectionManager.Instance.SelectUnit();
+
+                SelectionManager.Instance.SetSelectionStartPos(Input.mousePosition);
+            }
+
+            if (Input.GetMouseButtonUp(0)) {
+                SelectionManager.Instance.ReleaseSelectionBox();
+            }
+
+            if (Input.GetMouseButton(0)) {
+                SelectionManager.Instance.UpdateSelectionBox(Input.mousePosition);
+            }
+
+            if (Input.GetMouseButtonDown(1) && unitSelection.HasUnitsSelected()) {
+                MouseCommands();
+            }
         }
+        
     }
 
     void MouseCommands()
@@ -59,6 +95,8 @@ public class UnitCommands : MonoBehaviour
             
             unit.Move(destination);
         }
+
+        
     }
 
     void GatherResource(Resource resource)
@@ -82,5 +120,9 @@ public class UnitCommands : MonoBehaviour
         GameObject marker = Instantiate(selectionMarkerPrefab, position, Quaternion.identity);
 
         marker.transform.localScale = new Vector3(scale, scale, scale);
+    }
+
+    public void StartMoveCommand() {
+        awaitingForMovePosition = true;
     }
 }

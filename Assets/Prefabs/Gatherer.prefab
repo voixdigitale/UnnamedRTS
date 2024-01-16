@@ -250,6 +250,9 @@ MonoBehaviour:
   selectionCircle: {fileID: 1324919256352831265}
   weapon: {fileID: 7685711279358921162}
   unitData: {fileID: 11400000, guid: c3dc37708b1f612479a13c73af55d0cc, type: 2}
+  unitActionUI:
+  - {fileID: 11400000, guid: beb4b00c7811e8543b66b15f6fa76045, type: 2}
+  - {fileID: 11400000, guid: 939ab708db8b309428f483921721c26f, type: 2}
   backpackResource: 0
   backpackQuantity: 0
   backpack: {fileID: 70618407216246093}

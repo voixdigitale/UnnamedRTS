@@ -30,6 +30,7 @@ public abstract class Unit : MonoBehaviour, ISelectable
 
     [Header("Unit Data")]
     [SerializeField] protected UnitSO unitData;
+    [SerializeField] protected ActionButtonSO[] unitActionUI;
 
     protected UnitState state = UnitState.Idle;
     protected NavMeshAgent agent;
@@ -88,4 +89,16 @@ public abstract class Unit : MonoBehaviour, ISelectable
 
         SetState(UnitState.Moving);
     }
+
+    public virtual void GetNewDestination() {
+        player.GetComponent<UnitCommands>().StartMoveCommand();
+    }
+
+    public virtual void Stop() {
+        agent.isStopped = true;
+        agent.ResetPath();
+        SetState(UnitState.Idle);
+    }
+
+    public ActionButtonSO[] ActionButtons => unitActionUI;
 }

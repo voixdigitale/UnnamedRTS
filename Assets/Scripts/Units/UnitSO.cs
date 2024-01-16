@@ -8,7 +8,7 @@ public struct UnitCost {
     public int Amount;
 }
 
-[CreateAssetMenu(fileName = "UnitData", menuName = "ScriptableObjects/UnitDataScriptableObject")]
+[CreateAssetMenu(fileName = "UnitData", menuName = "ScriptableObjects/Unit Data")]
 public class UnitSO : ScriptableObject
 {
     [Header("General")]
@@ -17,6 +17,7 @@ public class UnitSO : ScriptableObject
     [SerializeField] float health;
     [SerializeField] float maxHealth;
     [SerializeField] List<UnitCost> unitCost;
+    [SerializeField] GameObject unitPrefab;
 
     [Header("Gathering")]
     [SerializeField] float gatherAmount;
@@ -36,6 +37,7 @@ public class UnitSO : ScriptableObject
     public float Health { get => health; }
     public float MaxHealth { get => maxHealth; }
     public List<UnitCost> UnitCost { get => unitCost; }
+    public GameObject UnitPrefab { get => unitPrefab; }
     public float GatherAmount { get => gatherAmount; }
     public float GatherRate { get => gatherRate; }
     public float AttackRange { get => attackRange; }

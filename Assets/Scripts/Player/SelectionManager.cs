@@ -1,7 +1,6 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Experimental.GraphView;
+using UnityEngine.EventSystems;
 using UnityEngine;
 
 public class SelectionManager : MonoBehaviour
@@ -20,11 +19,13 @@ public class SelectionManager : MonoBehaviour
 
     private new Camera camera;
     private Player player;
+    private UnitCommands unitCommands;
 
     void Awake()
     {
         camera = Camera.main;
         player = GetComponent<Player>();
+        unitCommands = GetComponent<UnitCommands>();
 
         if (Instance != null) {
             Destroy(gameObject);
@@ -34,30 +35,7 @@ public class SelectionManager : MonoBehaviour
         Instance = this;
     }
 
-    void Update()
-    {
-        if (Input.GetMouseButtonDown(0))
-        {
-            
-            DeselectAll();
-
-            SelectUnit();
-
-            selectionStartPos = Input.mousePosition;
-        }
-
-        if (Input.GetMouseButtonUp(0))
-        {
-            ReleaseSelectionBox();
-        }
-
-        if (Input.GetMouseButton(0))
-        {
-            UpdateSelectionBox(Input.mousePosition);
-        }
-    }
-
-    void ReleaseSelectionBox()
+    public void ReleaseSelectionBox()
     {
         selectionBox.gameObject.SetActive(false);
 
@@ -87,7 +65,7 @@ public class SelectionManager : MonoBehaviour
         OnSelectionChanged?.Invoke(currentSelection.Count > 0 ? currentSelection[0] : null);
     }
 
-    void UpdateSelectionBox(Vector2 currentMousePosition)
+    public void UpdateSelectionBox(Vector2 currentMousePosition)
     {
         if (!selectionBox.gameObject.activeInHierarchy)
         {
@@ -101,7 +79,7 @@ public class SelectionManager : MonoBehaviour
         selectionBox.anchoredPosition = selectionStartPos + new Vector2(width / 2, height / 2);
     }
 
-    void SelectUnit()
+    public void SelectUnit()
     {
         Ray ray = camera.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
@@ -111,21 +89,22 @@ public class SelectionManager : MonoBehaviour
             ISelectable selection = hit.collider.GetComponent<ISelectable>();
 
             if (selection != null && selection.BelongsToPlayer(player)) {
+                DeselectAll();
                 currentSelection.Add(selection);
                 selection.Select();
+                OnSelectionChanged?.Invoke(currentSelection[0]);
             }
         }
-        else
-        {
+        else if (!EventSystem.current.IsPointerOverGameObject()) {
             DeselectAll();
+            OnSelectionChanged?.Invoke(null);
         }
 
-        OnSelectionChanged?.Invoke(currentSelection.Count > 0 ? currentSelection[0] : null);
     }
 
-    void DeselectAll()
+    public void DeselectAll()
     {
-        if (!Input.GetKey(KeyCode.LeftShift))
+        if (!Input.GetKey(KeyCode.LeftShift) && !unitCommands.AwaitingForMovePosition)
         {
             foreach (ISelectable selected in currentSelection)
             {
@@ -137,5 +116,7 @@ public class SelectionManager : MonoBehaviour
     }
 
     public bool HasUnitsSelected() => currentSelection.Count > 0;
+
+    public void SetSelectionStartPos(Vector2 pos) => selectionStartPos = pos;
 
 }
