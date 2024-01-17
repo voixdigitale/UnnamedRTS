@@ -55,6 +55,7 @@ public abstract class Unit : MonoBehaviour, ISelectable
 
     public void SetAgentDestination(Vector3 destination) {
         agent.isStopped = false;
+        agent.speed = unitData.MoveSpeed;
         agent.speed = Random.Range(agent.speed - 0.1f, agent.speed + 0.1f); //Add a bit of randomness to the speed
         agent.SetDestination(destination);
         SetState(UnitState.Moving);
@@ -82,7 +83,6 @@ public abstract class Unit : MonoBehaviour, ISelectable
     {
         if (Vector3.Distance(transform.position, agent.destination) == 0f)
         {
-            agent.speed = unitData.MoveSpeed;
             SetState(UnitState.Idle);
         }
     }

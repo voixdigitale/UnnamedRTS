@@ -1,10 +1,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UnitMovement : MonoBehaviour
+public class UnitPlacements : MonoBehaviour
 {
     public static List<Vector3> GetGroupDestinations(Vector3 moveToPos, int numUnits, float unitGap)
     {
+        if (numUnits == 1)
+        {
+            return new List<Vector3>() { moveToPos };
+        }
+
         List<Vector3> destinations = new List<Vector3>();
 
         int rowNum = Mathf.CeilToInt(Mathf.Sqrt(numUnits));

@@ -34,20 +34,18 @@ public class MoveCommand : Command
     }
 
     IEnumerator MoveUnits() {
-        List<Vector3> destinations = UnitMovement.GetGroupDestinations(destination, SelectionManager.Instance.currentSelection.Count, 1f);
+        List<Vector3> destinations = UnitPlacements.GetGroupDestinations(destination, SelectionManager.Instance.currentSelection.Count, 1.2f);
 
         foreach (Unit unit in SelectionManager.Instance.currentSelection.OfType<Unit>()) {
             Vector3 destination = destinations.First();
             destinations.Remove(destination);
 
+            SelectionManager.Instance.SpawnSelectionMarker(destination);
+
             //Adding a bit of randomness to the movement
             yield return new WaitForSeconds(Random.Range(0, 30) / 100);
 
-            Move(unit);
+            unit.SetAgentDestination(destination);
         }
-    }
-
-    public virtual void Move(Unit unit) {
-        unit.SetAgentDestination(destination);
     }
 }

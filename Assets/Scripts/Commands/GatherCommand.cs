@@ -9,7 +9,7 @@ public class GatherCommand : Command
     Resource resource;
 
     public GatherCommand() {
-        IsCoroutine = true;
+        IsCoroutine = false;
     }
 
     public override void Execute() {
@@ -32,7 +32,9 @@ public class GatherCommand : Command
     }
 
     void GatherResource() {
-        List<Vector3> destinations = UnitMovement.GetSurroundingDestinations(resource.transform.position, SelectionManager.Instance.currentSelection.Count);
+        SelectionManager.Instance.SpawnSelectionMarker(resource.transform.position, 2f);
+
+        List<Vector3> destinations = UnitPlacements.GetSurroundingDestinations(resource.transform.position, SelectionManager.Instance.currentSelection.Count);
 
         foreach (Gatherer unit in SelectionManager.Instance.currentSelection.OfType<Gatherer>()) {
             Vector3 destination = destinations.First();

@@ -13,6 +13,8 @@ public class SelectionManager : MonoBehaviour
 
     [SerializeField] private LayerMask unitLayerMask;
     [SerializeField] private RectTransform selectionBox;
+    [SerializeField] private GameObject selectionMarkerPrefab;
+
     public List<ISelectable> currentSelection = new List<ISelectable>();
     private Vector2 selectionStartPos;
 
@@ -85,7 +87,7 @@ public class SelectionManager : MonoBehaviour
 
         if (Physics.Raycast(ray, out hit, Mathf.Infinity, unitLayerMask)) {
 
-            ISelectable selection = hit.collider.GetComponent<ISelectable>();
+            ISelectable selection = hit.collider.GetComponentInParent<ISelectable>();
 
             if (selection != null && selection.BelongsToPlayer(player)) {
                 DeselectAll();
@@ -112,6 +114,12 @@ public class SelectionManager : MonoBehaviour
 
             currentSelection.Clear();
         }
+    }
+
+    public void SpawnSelectionMarker(Vector3 position, float scale = 1.0f) {
+        GameObject marker = Instantiate(selectionMarkerPrefab, position, Quaternion.identity);
+
+        marker.transform.localScale = new Vector3(scale, scale, scale);
     }
 
     public bool HasUnitsSelected() => currentSelection.Count > 0;

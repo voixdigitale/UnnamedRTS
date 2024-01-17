@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using UnityEngine;
 using UnityEngine.UIElements;
+using Cursor = UnityEngine.Cursor;
 
 public enum CommandState {
     Idle,
@@ -11,11 +13,11 @@ public enum CommandState {
 
 public class CommandManager : MonoBehaviour
 {
-    public GameObject selectionMarkerPrefab;
-
     public CommandState State { get; private set; } = CommandState.Idle;
 
     public LayerMask layerMask;
+    [SerializeField] private Texture2D defaultCursor;
+    [SerializeField] private Texture2D pointerCursor;
 
     private SelectionManager unitSelection;
     private new Camera camera;
@@ -24,6 +26,8 @@ public class CommandManager : MonoBehaviour
     void Awake() {
         unitSelection = GetComponent<SelectionManager>();
         camera = Camera.main;
+
+        Cursor.SetCursor(defaultCursor, Vector2.zero, CursorMode.Auto);
     }
 
     void Update() {
@@ -38,14 +42,14 @@ public class CommandManager : MonoBehaviour
 
             case CommandState.AwaitingForInput:
                 if (Input.GetMouseButtonDown(0) && unitSelection.HasUnitsSelected()) {
-                    if(command.ValidateInput(GetMouseHit())) {
+                    if (command.ValidateInput(GetMouseHit())) {
                         State = CommandState.ReadyToExecute;
                     }
                 }
                 break;
 
             case CommandState.ReadyToExecute:
-                if (Input.GetMouseButtonUp(0) || Input.GetMouseButtonUp(1)) {
+                if ((Input.GetMouseButtonUp(0) || Input.GetMouseButtonUp(1))) {
                     State = CommandState.Idle;
                 }
                 ExecuteCommand();
@@ -84,27 +88,26 @@ public class CommandManager : MonoBehaviour
         command = new MoveCommand();
         if (command.ValidateInput(GetMouseHit()))
             State = CommandState.ReadyToExecute;
-    }
-
-    public void SpawnHitMarker(Vector3 position, float scale = 1.0f) {
-        GameObject marker = Instantiate(selectionMarkerPrefab, position, Quaternion.identity);
-
-        marker.transform.localScale = new Vector3(scale, scale, scale);
-    }
-
-    public void SetState(CommandState state) {
-        State = state;
+        else
+        {
+            command = new GatherCommand();
+            if (command.ValidateInput(GetMouseHit()))
+                State = CommandState.ReadyToExecute;
+        }
     }
 
     public void SetCommand(Command command) {
         this.command = command;
         State = CommandState.AwaitingForInput;
+        Cursor.SetCursor(pointerCursor, Vector2.zero, CursorMode.Auto);
     }
     public void ExecuteCommand() {
         if (command.IsCoroutine)
             ExecuteCoroutineCommand();
         else
             command.Execute();
+
+        Cursor.SetCursor(defaultCursor, Vector2.zero, CursorMode.Auto);
     }
 
     public void ExecuteCoroutineCommand() {

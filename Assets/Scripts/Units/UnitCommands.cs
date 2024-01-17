@@ -82,7 +82,7 @@ public class UnitCommands : MonoBehaviour
 
     IEnumerator MoveUnits(RaycastHit hit)
     {
-        List<Vector3> destinations = UnitMovement.GetGroupDestinations(hit.point, unitSelection.currentSelection.Count, 1f);
+        List<Vector3> destinations = UnitPlacements.GetGroupDestinations(hit.point, unitSelection.currentSelection.Count, 1f);
 
         foreach (Unit unit in unitSelection.currentSelection.OfType<Unit>()) {
             Vector3 destination = destinations.First();
@@ -103,7 +103,7 @@ public class UnitCommands : MonoBehaviour
     {
         SpawnSelectionMarker(resource.transform.position, 2f);
 
-        List<Vector3> destinations = UnitMovement.GetSurroundingDestinations(resource.transform.position, unitSelection.currentSelection.Count);
+        List<Vector3> destinations = UnitPlacements.GetSurroundingDestinations(resource.transform.position, unitSelection.currentSelection.Count);
 
         foreach (Gatherer unit in unitSelection.currentSelection.OfType<Gatherer>())
         {
@@ -117,7 +117,7 @@ public class UnitCommands : MonoBehaviour
     void AttackUnit(Unit target) {
         SpawnSelectionMarker(target.transform.position, 1f);
 
-        List<Vector3> destinations = UnitMovement.GetSurroundingDestinations(target.transform.position, unitSelection.currentSelection.Count);
+        List<Vector3> destinations = UnitPlacements.GetSurroundingDestinations(target.transform.position, unitSelection.currentSelection.Count);
 
         foreach (Unit attacker in unitSelection.currentSelection.OfType<Unit>()) {
             Vector3 destination = destinations.First();

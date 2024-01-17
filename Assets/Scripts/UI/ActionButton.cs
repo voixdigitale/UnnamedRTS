@@ -18,7 +18,7 @@ public class ActionButton : MonoBehaviour
     public void Setup(ActionButtonSO config, Player player) {
         iconImage.sprite = config.Icon;
         shortcutText.text = config.ShortcutKey.ToString();
-        methodName = config.MethodName;
+        methodName = config.name + "Command";
         shortcutKey = config.ShortcutKey;
         this.player = player;
         commandManager = player.GetComponent<CommandManager>();
