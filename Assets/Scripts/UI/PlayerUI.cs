@@ -37,7 +37,7 @@ public class PlayerUI : MonoBehaviour
     }
 
     private void Update() {
-        if (buildMenu.active) {
+        if (buildMenu.activeInHierarchy) {
             //Check if the player presses any of the keys assigned to the action buttons
             foreach (Transform child in buildMenu.transform) {
 
@@ -69,7 +69,7 @@ public class PlayerUI : MonoBehaviour
             if (selection is Unit) {
                 foreach (ActionButtonSO action in ((Unit)selection).ActionButtons) {
                     GameObject button = Instantiate(actionButtonPrefab, buildMenu.transform);
-                    button.GetComponent<ActionButton>().Setup(action);
+                    button.GetComponent<ActionButton>().Setup(action, player);
                 }
             }
             

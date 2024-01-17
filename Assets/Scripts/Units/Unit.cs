@@ -41,7 +41,7 @@ public abstract class Unit : MonoBehaviour, ISelectable
         agent.speed = unitData.MoveSpeed;
     }
 
-    protected void SetState(UnitState newState)
+    public void SetState(UnitState newState)
     {
         state = newState;
         OnStateChanged?.Invoke(newState);
@@ -53,6 +53,12 @@ public abstract class Unit : MonoBehaviour, ISelectable
         }
     }
 
+    public void SetAgentDestination(Vector3 destination) {
+        agent.isStopped = false;
+        agent.speed = Random.Range(agent.speed - 0.1f, agent.speed + 0.1f); //Add a bit of randomness to the speed
+        agent.SetDestination(destination);
+        SetState(UnitState.Moving);
+    }
     public void Select()
     {
         selectionCircle.SetActive(true);
@@ -81,17 +87,12 @@ public abstract class Unit : MonoBehaviour, ISelectable
         }
     }
 
-    public virtual void Move(Vector3 destination)
-    {
+    public virtual void Attack(Unit target, Vector3 destination) {
         agent.isStopped = false;
         agent.speed = Random.Range(agent.speed - 0.1f, agent.speed + 0.1f); //Add a bit of randomness to the speed
         agent.SetDestination(destination);
 
-        SetState(UnitState.Moving);
-    }
-
-    public virtual void GetNewDestination() {
-        player.GetComponent<UnitCommands>().StartMoveCommand();
+        SetState(UnitState.MovingToAttack);
     }
 
     public virtual void Stop() {

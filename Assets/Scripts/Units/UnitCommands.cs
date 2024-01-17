@@ -93,11 +93,11 @@ public class UnitCommands : MonoBehaviour
             //Adding a bit of randomness to the movement
             yield return new WaitForSeconds(Random.Range(0, 30) / 100);
             
-            unit.Move(destination);
+            unit.SetAgentDestination(destination);
         }
-
-        
     }
+
+
 
     void GatherResource(Resource resource)
     {
@@ -111,6 +111,19 @@ public class UnitCommands : MonoBehaviour
             destinations.Remove(destination);
 
             unit.Gather(resource, destination);
+        }
+    }
+
+    void AttackUnit(Unit target) {
+        SpawnSelectionMarker(target.transform.position, 1f);
+
+        List<Vector3> destinations = UnitMovement.GetSurroundingDestinations(target.transform.position, unitSelection.currentSelection.Count);
+
+        foreach (Unit attacker in unitSelection.currentSelection.OfType<Unit>()) {
+            Vector3 destination = destinations.First();
+            destinations.Remove(destination);
+
+            attacker.Attack(target, destination);
         }
     }
 

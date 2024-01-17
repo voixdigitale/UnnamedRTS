@@ -13,19 +13,18 @@ public class SelectionManager : MonoBehaviour
 
     [SerializeField] private LayerMask unitLayerMask;
     [SerializeField] private RectTransform selectionBox;
-
-    [HideInInspector] public List<ISelectable> currentSelection = new List<ISelectable>();
+    public List<ISelectable> currentSelection = new List<ISelectable>();
     private Vector2 selectionStartPos;
 
     private new Camera camera;
     private Player player;
-    private UnitCommands unitCommands;
+    private CommandManager commandManager;
 
     void Awake()
     {
         camera = Camera.main;
         player = GetComponent<Player>();
-        unitCommands = GetComponent<UnitCommands>();
+        commandManager = GetComponent<CommandManager>();
 
         if (Instance != null) {
             Destroy(gameObject);
@@ -104,7 +103,7 @@ public class SelectionManager : MonoBehaviour
 
     public void DeselectAll()
     {
-        if (!Input.GetKey(KeyCode.LeftShift) && !unitCommands.AwaitingForMovePosition)
+        if (!Input.GetKey(KeyCode.LeftShift) && commandManager.State != CommandState.AwaitingForInput)
         {
             foreach (ISelectable selected in currentSelection)
             {

@@ -72,6 +72,7 @@ public class Gatherer : Unit
 
         SetState(UnitState.MovingToGather);
     }
+
     public void UnloadBackPack() {
         player.AddResource(backpackResource, backpackQuantity);
         backpackResource = ResourceType.None;
