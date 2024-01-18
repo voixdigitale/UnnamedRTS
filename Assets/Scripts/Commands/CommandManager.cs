@@ -86,13 +86,21 @@ public class CommandManager : MonoBehaviour
 
     private void HandleRightClick() {
         command = new MoveCommand();
-        if (command.ValidateInput(GetMouseHit()))
+        if (command.ValidateInput(GetMouseHit())) {
             State = CommandState.ReadyToExecute;
-        else
-        {
-            command = new GatherCommand();
-            if (command.ValidateInput(GetMouseHit()))
-                State = CommandState.ReadyToExecute;
+            return;
+        }
+
+        command = new GatherCommand();
+        if (command.ValidateInput(GetMouseHit())) {
+            State = CommandState.ReadyToExecute;
+            return;
+        }
+
+        command = new AttackCommand();
+        if (command.ValidateInput(GetMouseHit())) {
+            State = CommandState.ReadyToExecute;
+            return;
         }
     }
 

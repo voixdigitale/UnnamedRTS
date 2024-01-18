@@ -3,9 +3,13 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
+using System.Linq;
 
 public class UnitAnimator : MonoBehaviour
 {
+    public int IsGatheringHash = Animator.StringToHash("IsGathering");
+    public int IsAttackingHash = Animator.StringToHash("IsAttacking");
+
     private Animator animator;
     private NavMeshAgent agent;
     private Unit unit;
@@ -36,27 +40,27 @@ public class UnitAnimator : MonoBehaviour
         switch (state)
         {
             case UnitState.Idle:
-                animator.SetBool("IsGathering", false);
-                break;
             case UnitState.Moving:
-                animator.SetBool("IsGathering", false);
-                break;
             case UnitState.MovingToGather:
-                animator.SetBool("IsGathering", false);
-                break;
-            
             case UnitState.MovingToBase:
-                animator.SetBool("IsGathering", false);
-                break;
             case UnitState.MovingToAttack:
-                animator.SetBool("IsGathering", false);
+                SetAllFalseExcept(-1);
                 break;
             case UnitState.Attacking:
-                animator.SetBool("IsGathering", false);
+                SetAllFalseExcept(IsAttackingHash);
                 break;
             case UnitState.Gathering:
-                animator.SetBool("IsGathering", true);
+                SetAllFalseExcept(IsGatheringHash);
                 break;
         }
+    }
+
+    void SetAllFalseExcept(int boolHash) {
+        animator.parameters
+            .Where(x => x.type == AnimatorControllerParameterType.Bool)
+            .ToList()
+            .ForEach(x => animator.SetBool(x.nameHash, false));
+        if (boolHash != -1)
+            animator.SetBool(boolHash, true);
     }
 }

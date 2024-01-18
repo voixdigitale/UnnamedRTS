@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine.EventSystems;
 using UnityEngine;
+using UnityEngine.Timeline;
 
 public class SelectionManager : MonoBehaviour
 {
@@ -116,8 +117,16 @@ public class SelectionManager : MonoBehaviour
         }
     }
 
-    public void SpawnSelectionMarker(Vector3 position, float scale = 1.0f) {
+    public void SpawnSelectionMarker(Vector3 position, float scale = 1.0f, Color? color = null) {
         GameObject marker = Instantiate(selectionMarkerPrefab, position, Quaternion.identity);
+
+        if (color.HasValue) {
+            ParticleSystem[] particles = marker.GetComponentsInChildren<ParticleSystem>();
+            foreach (ParticleSystem ps in particles) {
+                var main = ps.main;
+                main.startColor = Color.red;
+            }
+        }
 
         marker.transform.localScale = new Vector3(scale, scale, scale);
     }

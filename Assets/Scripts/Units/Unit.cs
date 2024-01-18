@@ -35,6 +35,8 @@ public abstract class Unit : MonoBehaviour, ISelectable
     protected UnitState state = UnitState.Idle;
     protected NavMeshAgent agent;
 
+    protected Transform target;
+
     protected virtual void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
@@ -45,6 +47,7 @@ public abstract class Unit : MonoBehaviour, ISelectable
     {
         state = newState;
         OnStateChanged?.Invoke(newState);
+        Debug.Log("Unit "+ gameObject.name + "changed to " + newState);
 
         if (newState == UnitState.Idle)
         {
@@ -76,6 +79,12 @@ public abstract class Unit : MonoBehaviour, ISelectable
             case UnitState.Moving:
                 MovingUpdate();
                 break;
+            case UnitState.MovingToAttack:
+                MovingToAttackUpdate();
+                break;
+            case UnitState.Attacking:
+                AttackUpdate();
+                break;
         }
     }
 
@@ -87,11 +96,30 @@ public abstract class Unit : MonoBehaviour, ISelectable
         }
     }
 
-    public virtual void Attack(Unit target, Vector3 destination) {
+    protected virtual void MovingToAttackUpdate() {
+        Debug.Log("Moving to attack distance: " + Vector3.Distance(transform.position, agent.destination) + ", attack range: " + unitData.AttackRange);
+        if (Vector3.Distance(transform.position, agent.destination) <= unitData.AttackRange) {
+            SetState(UnitState.Attacking);
+        }
+    }
+
+    protected virtual void AttackUpdate() {
+        if (target == null) {
+            SetState(UnitState.Idle);
+        }
+
+        if (target != null && Vector3.Distance(transform.position, target.position) > unitData.AttackRange) {
+            SetAgentDestination(target.position);
+            SetState(UnitState.MovingToAttack);
+        }
+    }
+
+    public virtual void Attack(Unit objective, Vector3 destination) {
         agent.isStopped = false;
         agent.speed = Random.Range(agent.speed - 0.1f, agent.speed + 0.1f); //Add a bit of randomness to the speed
         agent.SetDestination(destination);
 
+        target = objective.transform;
         SetState(UnitState.MovingToAttack);
     }
 

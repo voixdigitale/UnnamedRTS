@@ -16,10 +16,9 @@ public class Gatherer : Unit
     private Vector3 previousDestination;
 
     protected override void Update() {
+        base.Update();
+
         switch (state) {
-            case UnitState.Moving:
-                MovingUpdate();
-                break;
             case UnitState.MovingToGather:
                 MovingToGatherUpdate();
                 break;
