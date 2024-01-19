@@ -97,16 +97,17 @@ public abstract class Unit : MonoBehaviour, ISelectable
     }
 
     protected virtual void MovingToAttackUpdate() {
-        Debug.Log("Moving to attack distance: " + Vector3.Distance(transform.position, agent.destination) + ", attack range: " + unitData.AttackRange);
+        if (target == null) SetState(UnitState.Idle);
+
+        agent.destination = target.position;
+
         if (Vector3.Distance(transform.position, agent.destination) <= unitData.AttackRange) {
             SetState(UnitState.Attacking);
         }
     }
 
     protected virtual void AttackUpdate() {
-        if (target == null) {
-            SetState(UnitState.Idle);
-        }
+        if (target == null) SetState(UnitState.Idle);
 
         if (target != null && Vector3.Distance(transform.position, target.position) > unitData.AttackRange) {
             SetAgentDestination(target.position);

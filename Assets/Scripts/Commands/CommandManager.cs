@@ -106,9 +106,18 @@ public class CommandManager : MonoBehaviour
 
     public void SetCommand(Command command) {
         this.command = command;
-        State = CommandState.AwaitingForInput;
-        Cursor.SetCursor(pointerCursor, Vector2.zero, CursorMode.Auto);
+        if (command.RequiresValidation)
+        {
+            State = CommandState.AwaitingForInput;
+            Cursor.SetCursor(pointerCursor, Vector2.zero, CursorMode.Auto);
+        }
+        else
+        {
+            State = CommandState.ReadyToExecute;
+        }
+
     }
+
     public void ExecuteCommand() {
         if (command.IsCoroutine)
             ExecuteCoroutineCommand();
