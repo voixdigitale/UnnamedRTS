@@ -2,10 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using Photon.Pun;
+using Photon.Realtime;
 
-public class PlayerUI : MonoBehaviour
+public class PlayerUI : MonoBehaviourPunCallbacks
 {
-    public Player player;
+    public PlayerController player;
+    public static PlayerUI Instance { get; private set; }
 
     [Header("Resources")]
     public TextMeshProUGUI woodText;
@@ -16,29 +19,46 @@ public class PlayerUI : MonoBehaviour
     public GameObject buildMenu;
     public GameObject actionButtonPrefab;
 
-
-    void OnEnable()
+    void Awake()
     {
-        Player.OnResourceCollected += HandleOnResourceCollected;
+        //Show the cursor (useful for debugging between windows)
+        Cursor.visible = true;
+        Instance = this;
+    }
+
+    public override void OnEnable()
+    {
+        base.OnEnable();
+
+        PlayerController.OnResourceCollected += HandleOnResourceCollected;
         SelectionManager.OnSelectionChanged += HandleOnSelectionChanged;
     }
 
-    void OnDisable()
+    public override void OnDisable()
     {
-        Player.OnResourceCollected -= HandleOnResourceCollected;
+        base.OnDisable();
+
+        PlayerController.OnResourceCollected -= HandleOnResourceCollected;
         SelectionManager.OnSelectionChanged -= HandleOnSelectionChanged;
     }
 
     void Start()
     {
+        if (!photonView.IsMine)
+            return;
+
+        player = GameManager.Instance.GetPlayer(PhotonNetwork.LocalPlayer.ActorNumber);
         woodText.text = player.GetResource(ResourceType.Wood).ToString();
         scrapText.text = player.GetResource(ResourceType.Scrap).ToString();
         unitText.text = player.GetUnitCount().ToString() + " / 10";
     }
 
     private void Update() {
+        if (!photonView.IsMine)
+            return;
+
         if (buildMenu.activeInHierarchy) {
-            //Check if the player presses any of the keys assigned to the action buttons
+            //Check if the playerController presses any of the keys assigned to the action buttons
             foreach (Transform child in buildMenu.transform) {
 
                 ActionButton button = child.GetComponent<ActionButton>();

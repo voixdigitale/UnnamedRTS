@@ -4,9 +4,11 @@ using System.Collections;
 public abstract class Command {
     public bool IsCoroutine;
     public bool RequiresValidation = true;
+    public PlayerController player;
 
-    public Command() {
+    protected Command(PlayerController player) {
         IsCoroutine = false;
+        this.player = player;
     }
 
     public abstract void Execute();

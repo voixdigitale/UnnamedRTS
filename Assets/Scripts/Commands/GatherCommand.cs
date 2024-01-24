@@ -8,7 +8,7 @@ public class GatherCommand : Command
 {
     Resource resource;
 
-    public GatherCommand() {
+    public GatherCommand(PlayerController player) : base(player) {
         IsCoroutine = false;
     }
 
@@ -32,11 +32,11 @@ public class GatherCommand : Command
     }
 
     void GatherResource() {
-        SelectionManager.Instance.SpawnSelectionMarker(resource.transform.position, 2f);
+        player.SpawnSelectionMarker(resource.transform.position, 2f);
 
-        List<Vector3> destinations = UnitPlacements.GetSurroundingDestinations(resource.transform.position, SelectionManager.Instance.currentSelection.Count);
+        List<Vector3> destinations = UnitPlacements.GetSurroundingDestinations(resource.transform.position, player.GetCurrentSelectedCount<Gatherer>());
 
-        foreach (Gatherer unit in SelectionManager.Instance.currentSelection.OfType<Gatherer>()) {
+        foreach (Gatherer unit in player.GetSelectedUnits<Gatherer>()) {
             Vector3 destination = destinations.First();
             destinations.Remove(destination);
 

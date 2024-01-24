@@ -2,10 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using Photon.Realtime;
 
 public class StopCommand : Command
 {
-    public StopCommand()
+    protected StopCommand(PlayerController player) : base(player)
     {
         IsCoroutine = false;
         RequiresValidation = false;
@@ -23,7 +24,7 @@ public class StopCommand : Command
 
     public void StopUnits()
     {
-        foreach (Unit unit in SelectionManager.Instance.currentSelection.OfType<Unit>())
+        foreach (Unit unit in player.GetSelectedUnits<Unit>())
         {
             unit.Stop();
         }

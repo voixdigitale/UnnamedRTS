@@ -1,40 +1,37 @@
 using System;
 using System.Collections.Generic;
+using Photon.Pun;
 using UnityEngine.EventSystems;
 using UnityEngine;
 using UnityEngine.Timeline;
+using Photon.Realtime;
 
-public class SelectionManager : MonoBehaviour
+public class SelectionManager : MonoBehaviourPunCallbacks
 {
     #nullable enable
     public static event Action<ISelectable?>? OnSelectionChanged;
     #nullable disable
 
-    public static SelectionManager Instance { get; private set; }
-
     [SerializeField] private LayerMask unitLayerMask;
-    [SerializeField] private RectTransform selectionBox;
+    [SerializeField] public RectTransform selectionBox;
     [SerializeField] private GameObject selectionMarkerPrefab;
 
     public List<ISelectable> currentSelection = new List<ISelectable>();
     private Vector2 selectionStartPos;
 
     private new Camera camera;
-    private Player player;
+    private PlayerController playerController;
     private CommandManager commandManager;
 
     void Awake()
     {
         camera = Camera.main;
-        player = GetComponent<Player>();
-        commandManager = GetComponent<CommandManager>();
+    }
 
-        if (Instance != null) {
-            Destroy(gameObject);
-            return;
-        }
-
-        Instance = this;
+    public void Initialize(Player player) {
+        playerController = GameManager.Instance.GetPlayer(player.ActorNumber);
+        commandManager = CommandManager.Instance;
+        selectionBox = GameManager.Instance.selectionBox;
     }
 
     public void ReleaseSelectionBox()
@@ -44,7 +41,7 @@ public class SelectionManager : MonoBehaviour
         Vector2 min = selectionBox.anchoredPosition - (selectionBox.sizeDelta / 2);
         Vector2 max = selectionBox.anchoredPosition + (selectionBox.sizeDelta / 2);
 
-        foreach (Unit unit in player.units)
+        foreach (Unit unit in playerController.units)
         {
             Vector3 screenPos = camera.WorldToScreenPoint(unit.transform.position);
 
@@ -55,7 +52,7 @@ public class SelectionManager : MonoBehaviour
             }
         }
 
-        foreach (Building building in player.buildings) {
+        foreach (Building building in playerController.buildings) {
             Vector3 screenPos = camera.WorldToScreenPoint(building.transform.position);
 
             if (screenPos.x > min.x && screenPos.x < max.x && screenPos.y > min.y && screenPos.y < max.y) {
@@ -90,7 +87,7 @@ public class SelectionManager : MonoBehaviour
 
             ISelectable selection = hit.collider.GetComponentInParent<ISelectable>();
 
-            if (selection != null && selection.BelongsToPlayer(player)) {
+            if (selection != null && selection.BelongsToPlayer(playerController)) {
                 DeselectAll();
                 currentSelection.Add(selection);
                 selection.Select();

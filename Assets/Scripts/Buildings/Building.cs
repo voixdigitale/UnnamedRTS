@@ -1,8 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
+using Photon.Pun;
 using UnityEngine;
+using Photon.Realtime;
 
-public class Building : MonoBehaviour, ISelectable
+public class Building : MonoBehaviourPunCallbacks, ISelectable
 {
     [SerializeField] private Transform exitPos;
     [SerializeField] private Transform entrancePos;
@@ -11,10 +13,17 @@ public class Building : MonoBehaviour, ISelectable
     [SerializeField] private List<UnitSO> unitsToSpawn;
 
     [field: SerializeField]
-    public Player player { get; private set; }
+    public PlayerController player { get; private set; }
 
     private List<Gatherer> unitsInside = new List<Gatherer>();
     private List<float> timesOfArrival = new List<float>();
+
+    [PunRPC]
+    public void Initialize(Player player)
+    {
+        this.player = GameManager.Instance.GetPlayer(player.ActorNumber);
+        this.player.buildings.Add(this);
+    }
 
     void StoreUnit(Gatherer unit) {
         unitsInside.Add(unit);

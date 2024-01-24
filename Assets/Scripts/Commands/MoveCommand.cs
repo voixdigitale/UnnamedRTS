@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class MoveCommand : Command
 {
-    public MoveCommand() {
+    public MoveCommand(PlayerController player) : base(player) {
         IsCoroutine = true;
     }
 
@@ -34,13 +34,13 @@ public class MoveCommand : Command
     }
 
     IEnumerator MoveUnits() {
-        List<Vector3> destinations = UnitPlacements.GetGroupDestinations(destination, SelectionManager.Instance.currentSelection.Count, 1.2f);
+        List<Vector3> destinations = UnitPlacements.GetGroupDestinations(destination, player.GetCurrentSelectedCount<Unit>(), 1.2f);
 
-        foreach (Unit unit in SelectionManager.Instance.currentSelection.OfType<Unit>()) {
+        foreach (Unit unit in player.GetSelectedUnits<Unit>()) {
             Vector3 destination = destinations.First();
             destinations.Remove(destination);
 
-            SelectionManager.Instance.SpawnSelectionMarker(destination);
+            player.SpawnSelectionMarker(destination);
 
             //Adding a bit of randomness to the movement
             yield return new WaitForSeconds(Random.Range(0, 30) / 100);

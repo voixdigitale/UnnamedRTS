@@ -12,16 +12,16 @@ public class ActionButton : MonoBehaviour
 
     private string methodName;
     private KeyCode shortcutKey;
-    private Player player;
+    private PlayerController _playerController;
     private CommandManager commandManager;
 
-    public void Setup(ActionButtonSO config, Player player) {
+    public void Setup(ActionButtonSO config, PlayerController playerController) {
         iconImage.sprite = config.Icon;
         shortcutText.text = config.ShortcutKey.ToString();
         methodName = config.name + "Command";
         shortcutKey = config.ShortcutKey;
-        this.player = player;
-        commandManager = player.GetComponent<CommandManager>();
+        this._playerController = playerController;
+        commandManager = playerController.GetComponent<CommandManager>();
     }
 
     public void OnClick() {

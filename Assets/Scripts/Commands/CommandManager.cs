@@ -13,6 +13,7 @@ public enum CommandState {
 
 public class CommandManager : MonoBehaviour
 {
+    public static CommandManager Instance { get; private set; }
     public CommandState State { get; private set; } = CommandState.Idle;
 
     public LayerMask layerMask;
@@ -22,12 +23,17 @@ public class CommandManager : MonoBehaviour
     private SelectionManager unitSelection;
     private new Camera camera;
     private Command command;
+    private PlayerController player;
 
     void Awake() {
         unitSelection = GetComponent<SelectionManager>();
+        player = GetComponent<PlayerController>();
+
         camera = Camera.main;
 
         Cursor.SetCursor(defaultCursor, Vector2.zero, CursorMode.Auto);
+
+        Instance = this;
     }
 
     void Update() {
@@ -59,17 +65,17 @@ public class CommandManager : MonoBehaviour
 
     private void HandleSelection() {
         if (Input.GetMouseButtonDown(0)) {
-            SelectionManager.Instance.SelectUnit();
+            unitSelection.SelectUnit();
 
-            SelectionManager.Instance.SetSelectionStartPos(Input.mousePosition);
+            unitSelection.SetSelectionStartPos(Input.mousePosition);
         }
 
         if (Input.GetMouseButtonUp(0)) {
-            SelectionManager.Instance.ReleaseSelectionBox();
+            unitSelection.ReleaseSelectionBox();
         }
 
         if (Input.GetMouseButton(0)) {
-            SelectionManager.Instance.UpdateSelectionBox(Input.mousePosition);
+            unitSelection.UpdateSelectionBox(Input.mousePosition);
         }
     }
 
@@ -85,19 +91,19 @@ public class CommandManager : MonoBehaviour
     }
 
     private void HandleRightClick() {
-        command = new MoveCommand();
+        command = new MoveCommand(player);
         if (command.ValidateInput(GetMouseHit())) {
             State = CommandState.ReadyToExecute;
             return;
         }
 
-        command = new GatherCommand();
+        command = new GatherCommand(player);
         if (command.ValidateInput(GetMouseHit())) {
             State = CommandState.ReadyToExecute;
             return;
         }
 
-        command = new AttackCommand();
+        command = new AttackCommand(player);
         if (command.ValidateInput(GetMouseHit())) {
             State = CommandState.ReadyToExecute;
             return;

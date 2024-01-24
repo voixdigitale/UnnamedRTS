@@ -21,7 +21,7 @@ public abstract class Unit : MonoBehaviour, ISelectable
     public event Action<UnitState> OnStateChanged;
 
     [field: SerializeField]
-    public Player player { get; protected set;}
+    public PlayerController player { get; protected set;}
     public Building homeBase;
 
     [Header("Unit Setup")]
