@@ -30,7 +30,6 @@ public class CommandManager : MonoBehaviour
         player = GetComponent<PlayerController>();
 
         camera = Camera.main;
-
         Cursor.SetCursor(defaultCursor, Vector2.zero, CursorMode.Auto);
 
         Instance = this;

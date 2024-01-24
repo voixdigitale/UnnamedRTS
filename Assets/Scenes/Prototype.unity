@@ -499,6 +499,7 @@ MonoBehaviour:
   - {fileID: 449925927}
   players: []
   selectionBox: {fileID: 2021323495}
+  cameraControl: {fileID: 135074278}
 --- !u!4 &213052335
 Transform:
   m_ObjectHideFlags: 0

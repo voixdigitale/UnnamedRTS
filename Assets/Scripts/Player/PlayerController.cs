@@ -14,12 +14,15 @@ public class PlayerController : MonoBehaviourPun, IPunObservable {
 
     [HideInInspector]
     public int id;
-    public Player photonPlayer;
 
     [Header("Units")]
     public List<Unit> units = new List<Unit>();
     public List<Building> buildings = new List<Building>();
-    
+
+    [Header("Components")]
+    public Player photonPlayer;
+    [SerializeField] public CameraController cameraControl;
+
     private SelectionManager selectionManager;
     private CommandManager commandManager;
 
@@ -37,6 +40,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable {
         if (player.IsLocal) {
             me = this;
             selectionManager.Initialize(me);
+            cameraControl = GameManager.Instance.cameraControl;
         } else {
             enemy = this;
             selectionManager.enabled = false;
@@ -58,6 +62,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable {
         Building buildingScript = buildingObj.GetComponent<Building>();
         buildingScript.photonView.RPC("Initialize", photonPlayer, true);
         buildingScript.photonView.RPC("Initialize",  RpcTarget.Others, false);
+        cameraControl.MoveCameraTo(GameManager.Instance.spawnPoints[id - 1].position);
 
         // Give the player 2 gatherers
         for (int i = 0; i < 2; i++) {

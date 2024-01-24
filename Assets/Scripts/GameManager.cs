@@ -20,6 +20,7 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     [Header("Components")]
     [SerializeField] public RectTransform selectionBox; //The selection box UI element, needed for player initialization
+    [SerializeField] public CameraController cameraControl;
 
     private int playersInGame;
 
