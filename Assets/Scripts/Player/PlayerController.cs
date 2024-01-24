@@ -9,16 +9,16 @@ using System.Linq;
 public class PlayerController : MonoBehaviourPun, IPunObservable {
 
     public static event Action OnResourceCollected;
+    public static PlayerController me;
+    public static PlayerController enemy;
 
     [HideInInspector]
     public int id;
+    public Player photonPlayer;
 
     [Header("Units")]
     public List<Unit> units = new List<Unit>();
     public List<Building> buildings = new List<Building>();
-
-    [Header("Components")]
-    public Player photonPlayer;
     
     private SelectionManager selectionManager;
     private CommandManager commandManager;
@@ -32,23 +32,41 @@ public class PlayerController : MonoBehaviourPun, IPunObservable {
 
     [PunRPC]
     public void Initialize(Player player) {
-        if (!photonView.IsMine) return;
-
         photonPlayer = player;
+
+        if (player.IsLocal) {
+            me = this;
+            selectionManager.Initialize(me);
+        } else {
+            enemy = this;
+            selectionManager.enabled = false;
+            commandManager.enabled = false;
+        }
+
         id = player.ActorNumber;
 
         GameManager.Instance.players[id - 1] = this;
-        
-        selectionManager.Initialize(player);
     }
 
 
     public void Start()
     {
+        if (!photonView.IsMine) return;
 
-        /*GameObject buildingObj = PhotonNetwork.Instantiate(GameManager.Instance.baseBuildingPrefabPath, GameManager.Instance.spawnPoints[id - 1].position, Quaternion.identity);
+        PlayerUI.Instance.Initialize(me);
+        GameObject buildingObj = PhotonNetwork.Instantiate(GameManager.Instance.baseBuildingPrefabPath, GameManager.Instance.spawnPoints[id - 1].position, Quaternion.identity);
         Building buildingScript = buildingObj.GetComponent<Building>();
-        buildingScript.photonView.RPC("Initialize", RpcTarget.All, photonPlayer);*/
+        buildingScript.photonView.RPC("Initialize", photonPlayer, true);
+        buildingScript.photonView.RPC("Initialize",  RpcTarget.Others, false);
+
+        // Give the player 2 gatherers
+        for (int i = 0; i < 2; i++) {
+            Vector3 spawnPosition = new Vector3(GameManager.Instance.spawnPoints[id - 1].position.x + i * 2f, GameManager.Instance.spawnPoints[id - 1].position.y + 1, GameManager.Instance.spawnPoints[id - 1].position.z - 6f);
+            GameObject gathererObj = PhotonNetwork.Instantiate(GameManager.Instance.GatherUnitPrefabPath, spawnPosition, Quaternion.identity);
+            Gatherer gathererScript = gathererObj.GetComponent<Gatherer>();
+            gathererScript.photonView.RPC("Initialize", photonPlayer, true);
+            gathererScript.photonView.RPC("Initialize",  RpcTarget.Others, false);
+        }
     }
 
 
@@ -108,5 +126,9 @@ public class PlayerController : MonoBehaviourPun, IPunObservable {
     public void SpawnSelectionMarker(Vector3 position, float duration = 1f, Color? color = null)
     {
         selectionManager.SpawnSelectionMarker(position, duration, color);
+    }
+
+    public PlayerController GetOtherPlayer(PlayerController player) {
+        return player == me ? enemy : me;
     }
 }

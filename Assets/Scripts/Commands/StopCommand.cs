@@ -6,7 +6,7 @@ using Photon.Realtime;
 
 public class StopCommand : Command
 {
-    protected StopCommand(PlayerController player) : base(player)
+    public StopCommand(PlayerController player) : base(player)
     {
         IsCoroutine = false;
         RequiresValidation = false;

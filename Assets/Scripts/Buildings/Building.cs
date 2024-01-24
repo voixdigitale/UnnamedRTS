@@ -19,10 +19,14 @@ public class Building : MonoBehaviourPunCallbacks, ISelectable
     private List<float> timesOfArrival = new List<float>();
 
     [PunRPC]
-    public void Initialize(Player player)
+    public void Initialize(bool isMine)
     {
-        this.player = GameManager.Instance.GetPlayer(player.ActorNumber);
-        this.player.buildings.Add(this);
+        if (isMine) {
+            player = PlayerController.me;
+        } else {
+            player = PlayerController.enemy;
+        }
+        player.buildings.Add(this);
     }
 
     void StoreUnit(Gatherer unit) {

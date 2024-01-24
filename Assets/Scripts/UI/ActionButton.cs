@@ -4,6 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using System.Reflection;
 
 public class ActionButton : MonoBehaviour
 {
@@ -36,7 +37,8 @@ public class ActionButton : MonoBehaviour
             return;
         }
 
-        Command command = (Command)Activator.CreateInstance(commandType);
+        Command command = (Command)Activator.CreateInstance(commandType, new System.Object[] { _playerController });
+
         commandManager.SetCommand(command);
     }
 

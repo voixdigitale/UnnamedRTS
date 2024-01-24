@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.Timeline;
 using Photon.Realtime;
 
-public class SelectionManager : MonoBehaviourPunCallbacks
+public class SelectionManager : MonoBehaviour
 {
     #nullable enable
     public static event Action<ISelectable?>? OnSelectionChanged;
@@ -28,8 +28,8 @@ public class SelectionManager : MonoBehaviourPunCallbacks
         camera = Camera.main;
     }
 
-    public void Initialize(Player player) {
-        playerController = GameManager.Instance.GetPlayer(player.ActorNumber);
+    public void Initialize(PlayerController player) {
+        playerController = player;
         commandManager = CommandManager.Instance;
         selectionBox = GameManager.Instance.selectionBox;
     }

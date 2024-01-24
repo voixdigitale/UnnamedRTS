@@ -4,6 +4,8 @@ using UnityEngine.AI;
 using UnityEngine.Events;
 using UnityEngine.Rendering;
 using Random = UnityEngine.Random;
+using Photon.Pun;
+using Photon.Realtime;
 
 public enum UnitState
 {
@@ -16,7 +18,7 @@ public enum UnitState
     Gathering
 }
 
-public abstract class Unit : MonoBehaviour, ISelectable
+public abstract class Unit : MonoBehaviourPun, ISelectable
 {
     public event Action<UnitState> OnStateChanged;
 
@@ -36,6 +38,20 @@ public abstract class Unit : MonoBehaviour, ISelectable
     protected NavMeshAgent agent;
 
     protected Transform target;
+
+
+    [PunRPC]
+    public void Initialize(bool isMine) {
+        if (isMine) {
+            player = PlayerController.me;
+            homeBase = PlayerController.me.buildings[0];
+        } else {
+            player = PlayerController.enemy;
+            homeBase = PlayerController.enemy.buildings[0];
+        }
+        
+        player.units.Add(this);
+    }
 
     protected virtual void Awake()
     {

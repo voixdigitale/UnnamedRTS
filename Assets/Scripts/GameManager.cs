@@ -13,6 +13,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     [Header("Players")]
     public string playerPrefabPath;
     public string baseBuildingPrefabPath;
+    public string GatherUnitPrefabPath;
 
     public Transform[] spawnPoints;
     public PlayerController[] players;
@@ -47,13 +48,5 @@ public class GameManager : MonoBehaviourPunCallbacks
         GameObject playerObj = PhotonNetwork.Instantiate(playerPrefabPath, Vector3.zero, Quaternion.identity);
         PlayerController playerScript = playerObj.GetComponent<PlayerController>();
         playerScript.photonView.RPC("Initialize", RpcTarget.All, PhotonNetwork.LocalPlayer);
-    }
-
-    public PlayerController GetPlayer(int playerId) {
-        return players.First(x => x.id == playerId);
-    }
-
-    public PlayerController GetPlayer(GameObject playerObj) {
-        return players.First(x => x.gameObject == playerObj);
     }
 }

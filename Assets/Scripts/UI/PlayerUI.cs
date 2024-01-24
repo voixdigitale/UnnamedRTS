@@ -5,7 +5,7 @@ using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
 
-public class PlayerUI : MonoBehaviourPunCallbacks
+public class PlayerUI : MonoBehaviour
 {
     public PlayerController player;
     public static PlayerUI Instance { get; private set; }
@@ -26,37 +26,26 @@ public class PlayerUI : MonoBehaviourPunCallbacks
         Instance = this;
     }
 
-    public override void OnEnable()
+    public void OnEnable()
     {
-        base.OnEnable();
-
         PlayerController.OnResourceCollected += HandleOnResourceCollected;
         SelectionManager.OnSelectionChanged += HandleOnSelectionChanged;
     }
 
-    public override void OnDisable()
+    public void OnDisable()
     {
-        base.OnDisable();
-
         PlayerController.OnResourceCollected -= HandleOnResourceCollected;
         SelectionManager.OnSelectionChanged -= HandleOnSelectionChanged;
     }
 
-    void Start()
-    {
-        if (!photonView.IsMine)
-            return;
-
-        player = GameManager.Instance.GetPlayer(PhotonNetwork.LocalPlayer.ActorNumber);
+    public void Initialize(PlayerController player) {
+        this.player = player;
         woodText.text = player.GetResource(ResourceType.Wood).ToString();
         scrapText.text = player.GetResource(ResourceType.Scrap).ToString();
         unitText.text = player.GetUnitCount().ToString() + " / 10";
     }
 
     private void Update() {
-        if (!photonView.IsMine)
-            return;
-
         if (buildMenu.activeInHierarchy) {
             //Check if the playerController presses any of the keys assigned to the action buttons
             foreach (Transform child in buildMenu.transform) {
