@@ -1,20 +1,42 @@
 using System.Collections;
 using System.Collections.Generic;
+using Photon.Pun;
 using UnityEngine;
+using Photon.Realtime;
+using Unity.VisualScripting;
+using UnityEngine.UI;
+using System;
 
-public class Building : MonoBehaviour, ISelectable
+public class Building : MonoBehaviourPunCallbacks, ISelectable
 {
     [SerializeField] private Transform exitPos;
     [SerializeField] private Transform entrancePos;
     [SerializeField] private float unloadTime = 1f;
     [SerializeField] private GameObject selectionCircle;
-    [SerializeField] private List<UnitSO> unitsToSpawn;
+    [SerializeField] private ActionButtonSO[] buildingActionUI;
+
+    [Header("UI")]
+    [SerializeField] private GameObject buildingBar;
+    [SerializeField] private Slider buildingProgress;
 
     [field: SerializeField]
-    public Player player { get; private set; }
+    public PlayerController player { get; private set; }
 
     private List<Gatherer> unitsInside = new List<Gatherer>();
     private List<float> timesOfArrival = new List<float>();
+    private bool isBusy = false;
+
+    [PunRPC]
+    public void Initialize(bool isMine)
+    {
+        if (isMine) {
+            player = PlayerController.me;
+        } else {
+            player = PlayerController.enemy;
+        }
+        player.buildings.Add(this);
+        GameManager.Instance.RefreshNavMesh();
+    }
 
     void StoreUnit(Gatherer unit) {
         unitsInside.Add(unit);
@@ -31,11 +53,6 @@ public class Building : MonoBehaviour, ISelectable
                 unitsInside.RemoveAt(i);
                 timesOfArrival.RemoveAt(i);
             }
-        }
-
-        if (Input.GetKeyDown(KeyCode.G) && player.GetResource(ResourceType.Wood) >= 10 && player.buildings.Contains(this)) {
-            player.AddResource(ResourceType.Wood, -10);
-            //SpawnUnit();
         }
     }
 
@@ -58,4 +75,57 @@ public class Building : MonoBehaviour, ISelectable
     public void Deselect() {
         selectionCircle.SetActive(false);
     }
+
+    public void TrySpawningUnit(UnitSO unit)
+    {
+        if (player.HasEnoughResources(unit.UnitCost) && !isBusy)
+        {
+            foreach (ProductionCost unitCost in unit.UnitCost)
+            {
+                player.RemoveResource(unitCost.Resource, unitCost.Amount);
+            }
+
+            isBusy = true;
+            StartCoroutine(ProduceUnit(unit, unit.TimeToProduce));
+        } else if (isBusy)
+        {
+            PlayerUI.Instance.ShowErrorMessage("Building is busy!");
+        }
+
+        else
+        {
+            PlayerUI.Instance.ShowErrorMessage("Not enough resources!");
+        }
+    }
+
+    private IEnumerator ProduceUnit(UnitSO unit, float timeToProduce)
+    {
+        float timePassed = 0f;
+        buildingBar.SetActive(true);
+        buildingProgress.maxValue = timeToProduce;
+        buildingProgress.value = 0f;
+
+        while (timePassed < timeToProduce)
+        {
+            timePassed += Time.deltaTime;
+            buildingProgress.value = timePassed;
+            yield return null;
+        }
+
+        SpawnUnit(unit);
+        buildingBar.SetActive(false);
+        isBusy = false;
+    }
+
+    private void SpawnUnit(UnitSO unit)
+    {
+        Vector3 spawnPosition =
+            new Vector3(transform.position.x, transform.position.y + 1, transform.position.z - 6f);
+        GameObject unitObj = PhotonNetwork.Instantiate(unit.UnitName, spawnPosition, Quaternion.identity);
+        Unit unitScript = unitObj.GetComponent<Unit>();
+        unitScript.photonView.RPC("Initialize", player.photonPlayer, true);
+        unitScript.photonView.RPC("Initialize", RpcTarget.Others, false);
+    }
+
+    public ActionButtonSO[] ActionButtons => buildingActionUI;
 }

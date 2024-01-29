@@ -209,6 +209,9 @@ GameObject:
   - component: {fileID: 991574602433037439}
   - component: {fileID: 9097388522080343263}
   - component: {fileID: 2050219591850994292}
+  - component: {fileID: 3377976349827327230}
+  - component: {fileID: 5086996253706577504}
+  - component: {fileID: 212472262096748968}
   m_Layer: 6
   m_Name: Gatherer
   m_TagString: Unit
@@ -255,6 +258,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 939ab708db8b309428f483921721c26f, type: 2}
   - {fileID: 11400000, guid: f2519f7c124766c47810aeefff2f62d3, type: 2}
   - {fileID: 11400000, guid: d5982ccf2f59bef4bac5ef6a27d98ea8, type: 2}
+  - {fileID: 11400000, guid: 6750dc108c1cfd64fbff4ec58aaa6ed2, type: 2}
   backpackResource: 0
   backpackQuantity: 0
   backpack: {fileID: 70618407216246093}
@@ -270,6 +274,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5159e5e3d4eb6dc40a95663dd844787f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  IsGatheringHash: 2122632622
+  IsAttackingHash: -1130678506
 --- !u!95 &3914999180473160570
 Animator:
   serializedVersion: 5
@@ -363,6 +369,78 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &3377976349827327230
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1096112807828452666}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents:
+  - {fileID: 5086996253706577504}
+  - {fileID: 212472262096748968}
+  sceneViewId: 0
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
+--- !u!114 &5086996253706577504
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1096112807828452666}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizePosition: 1
+  m_SynchronizeRotation: 1
+  m_SynchronizeScale: 0
+  m_UseLocal: 1
+--- !u!114 &212472262096748968
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1096112807828452666}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b8c4a61274f60b4ea5fb4299cfdbf14, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowLayerWeightsInspector: 1
+  ShowParameterInspector: 1
+  m_SynchronizeParameters:
+  - Type: 1
+    SynchronizeType: 1
+    Name: MoveSpeed
+  - Type: 4
+    SynchronizeType: 1
+    Name: IsGathering
+  - Type: 4
+    SynchronizeType: 1
+    Name: IsAttacking
+  - Type: 9
+    SynchronizeType: 1
+    Name: Death
+  m_SynchronizeLayers:
+  - SynchronizeType: 1
+    LayerIndex: 0
+  - SynchronizeType: 1
+    LayerIndex: 1
 --- !u!1 &1189001923945647673
 GameObject:
   m_ObjectHideFlags: 0

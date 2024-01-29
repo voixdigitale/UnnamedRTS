@@ -2,10 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using Photon.Pun;
+using Photon.Realtime;
+using System.Linq;
 
 public class PlayerUI : MonoBehaviour
 {
-    public Player player;
+    public PlayerController player;
+    public static PlayerUI Instance { get; private set; }
 
     [Header("Resources")]
     public TextMeshProUGUI woodText;
@@ -16,21 +20,30 @@ public class PlayerUI : MonoBehaviour
     public GameObject buildMenu;
     public GameObject actionButtonPrefab;
 
+    [Header("Messaging")]
+    public TextMeshProUGUI errorMessage;
 
-    void OnEnable()
+    void Awake()
     {
-        Player.OnResourceCollected += HandleOnResourceCollected;
+        //Show the cursor (useful for debugging between windows)
+        Cursor.visible = true;
+        Instance = this;
+    }
+
+    public void OnEnable()
+    {
+        PlayerController.OnResourceCollected += HandleOnResourceCollected;
         SelectionManager.OnSelectionChanged += HandleOnSelectionChanged;
     }
 
-    void OnDisable()
+    public void OnDisable()
     {
-        Player.OnResourceCollected -= HandleOnResourceCollected;
+        PlayerController.OnResourceCollected -= HandleOnResourceCollected;
         SelectionManager.OnSelectionChanged -= HandleOnSelectionChanged;
     }
 
-    void Start()
-    {
+    public void Initialize(PlayerController player) {
+        this.player = player;
         woodText.text = player.GetResource(ResourceType.Wood).ToString();
         scrapText.text = player.GetResource(ResourceType.Scrap).ToString();
         unitText.text = player.GetUnitCount().ToString() + " / 10";
@@ -38,12 +51,12 @@ public class PlayerUI : MonoBehaviour
 
     private void Update() {
         if (buildMenu.activeInHierarchy) {
-            //Check if the player presses any of the keys assigned to the action buttons
+            //Check if the playerController presses any of the keys assigned to the action buttons
             foreach (Transform child in buildMenu.transform) {
 
                 ActionButton button = child.GetComponent<ActionButton>();
 
-                if (Input.GetKeyDown(button.GetShortcutKey())) {
+                if (Input.GetKeyUp(button.GetShortcutKey())) {
                     child.GetComponent<ActionButton>().OnClick();
                 }
             }
@@ -62,18 +75,35 @@ public class PlayerUI : MonoBehaviour
             Destroy(child.gameObject);
         }
 
-        if (selection == null) {
-            buildMenu.SetActive(false);
-        } else {
+        if (selection is Unit) {
             buildMenu.SetActive(true);
-            if (selection is Unit) {
-                foreach (ActionButtonSO action in ((Unit)selection).ActionButtons) {
-                    GameObject button = Instantiate(actionButtonPrefab, buildMenu.transform);
-                    button.GetComponent<ActionButton>().Setup(action, player);
-                }
+            foreach (ActionButtonSO action in ((Unit)selection).ActionButtons) {
+                GameObject button = Instantiate(actionButtonPrefab, buildMenu.transform);
+                button.GetComponent<ActionButton>().Setup(action, player);
             }
-            
+        } else if (selection is Building)  {
+            buildMenu.SetActive(true);
+            foreach (ActionButtonSO action in ((Building)selection).ActionButtons)
+            {
+                GameObject button = Instantiate(actionButtonPrefab, buildMenu.transform);
+                button.GetComponent<ActionButton>().Setup(action, player, selection);
+            }
+        } else {
+            buildMenu.SetActive(false);
         }
     }
     #nullable disable
+
+    public void ShowErrorMessage(string message)
+    {
+        errorMessage.text = message;
+        errorMessage.canvasRenderer.SetAlpha(1f);
+        StartCoroutine(Instance.ClearErrorMessage());
+    }
+
+    private IEnumerator ClearErrorMessage()
+    {
+        yield return new WaitForSeconds(2f);
+        errorMessage.CrossFadeAlpha(0f, 1f, false);
+    }
 }

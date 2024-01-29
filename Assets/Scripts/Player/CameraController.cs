@@ -10,9 +10,11 @@ public class CameraController : MonoBehaviour {
     public float maxZoom = 200f;
 
     private new Camera camera;
+    private Vector3 cameraOffset;
 
     void Awake() {
         camera = Camera.main;
+        cameraOffset = camera.transform.position - transform.position;
     }
 
     void MoveCamera() {
@@ -39,5 +41,9 @@ public class CameraController : MonoBehaviour {
     void Update() {
         MoveCamera();
         ZoomCamera();
+    }
+
+    public void MoveCameraTo(Vector3 position) {
+        transform.position = position - new Vector3(cameraOffset.x, 0, cameraOffset.z + 10f);
     }
 }

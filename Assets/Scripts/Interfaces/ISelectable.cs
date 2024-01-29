@@ -4,10 +4,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public interface ISelectable {
-    public Player player {get;}
+    public PlayerController player {get;}
 
     public void Select();
     public void Deselect();
 
-    public bool BelongsToPlayer(Player player) => this.player == player;
+    public bool BelongsToPlayer(PlayerController player) => this.player == player;
 }

@@ -4,6 +4,8 @@ using UnityEngine.AI;
 using UnityEngine.Events;
 using UnityEngine.Rendering;
 using Random = UnityEngine.Random;
+using Photon.Pun;
+using Photon.Realtime;
 
 public enum UnitState
 {
@@ -16,12 +18,12 @@ public enum UnitState
     Gathering
 }
 
-public abstract class Unit : MonoBehaviour, ISelectable
+public abstract class Unit : MonoBehaviourPun, ISelectable
 {
     public event Action<UnitState> OnStateChanged;
 
     [field: SerializeField]
-    public Player player { get; protected set;}
+    public PlayerController player { get; protected set;}
     public Building homeBase;
 
     [Header("Unit Setup")]
@@ -36,6 +38,20 @@ public abstract class Unit : MonoBehaviour, ISelectable
     protected NavMeshAgent agent;
 
     protected Transform target;
+
+
+    [PunRPC]
+    public void Initialize(bool isMine) {
+        if (isMine) {
+            player = PlayerController.me;
+            homeBase = PlayerController.me.buildings[0];
+        } else {
+            player = PlayerController.enemy;
+            homeBase = PlayerController.enemy.buildings[0];
+        }
+        
+        player.units.Add(this);
+    }
 
     protected virtual void Awake()
     {
@@ -57,11 +73,19 @@ public abstract class Unit : MonoBehaviour, ISelectable
     }
 
     public void SetAgentDestination(Vector3 destination) {
+        //Check if the agent has been placed in a navmesh
+        if (!agent.isOnNavMesh)
+        {
+            Debug.LogError("Agent " + gameObject.name + " is not on a navmesh!");
+            return;
+        }
+
         agent.isStopped = false;
         agent.speed = unitData.MoveSpeed;
         agent.speed = Random.Range(agent.speed - 0.1f, agent.speed + 0.1f); //Add a bit of randomness to the speed
         agent.SetDestination(destination);
         SetState(UnitState.Moving);
+
     }
     public void Select()
     {
@@ -97,16 +121,17 @@ public abstract class Unit : MonoBehaviour, ISelectable
     }
 
     protected virtual void MovingToAttackUpdate() {
-        Debug.Log("Moving to attack distance: " + Vector3.Distance(transform.position, agent.destination) + ", attack range: " + unitData.AttackRange);
+        if (target == null) SetState(UnitState.Idle);
+
+        agent.destination = target.position;
+
         if (Vector3.Distance(transform.position, agent.destination) <= unitData.AttackRange) {
             SetState(UnitState.Attacking);
         }
     }
 
     protected virtual void AttackUpdate() {
-        if (target == null) {
-            SetState(UnitState.Idle);
-        }
+        if (target == null) SetState(UnitState.Idle);
 
         if (target != null && Vector3.Distance(transform.position, target.position) > unitData.AttackRange) {
             SetAgentDestination(target.position);

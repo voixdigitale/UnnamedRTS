@@ -79,4 +79,15 @@ public class Gatherer : Unit
         backpack.SetActive(false);
         Gather(previousResource, previousDestination);
     }
+
+    protected override void MovingUpdate() {
+        weapon.SetActive(false);
+        base.MovingUpdate();
+    }
+
+    protected override void AttackUpdate()
+    {
+        weapon.SetActive(true);
+        base.AttackUpdate();
+    }
 }

@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class AttackCommand : Command
 {
-    public AttackCommand() {
+    public AttackCommand(PlayerController player) : base(player) {
         IsCoroutine = false;
     }
 
@@ -16,7 +16,7 @@ public class AttackCommand : Command
         return;
     }
 
-    public override bool ValidateInput(RaycastHit? inputHit) {
+    public override bool ValidateInput(RaycastHit? inputHit, object[] args) {
         if (!inputHit.HasValue)
             return false;
         RaycastHit hit = (RaycastHit)inputHit;
@@ -31,11 +31,11 @@ public class AttackCommand : Command
     }
 
     void AttackUnit(Unit target) {
-        SelectionManager.Instance.SpawnSelectionMarker(target.transform.position, 1f, Color.red);
+        player.SpawnSelectionMarker(target.transform.position, 1f, Color.red);
 
-        List<Vector3> destinations = UnitPlacements.GetSurroundingDestinations(target.transform.position, SelectionManager.Instance.currentSelection.Count);
+        List<Vector3> destinations = UnitPlacements.GetSurroundingDestinations(target.transform.position, player.GetCurrentSelectedCount<Unit>());
 
-        foreach (Unit attacker in SelectionManager.Instance.currentSelection.OfType<Unit>()) {
+        foreach (Unit attacker in player.GetSelectedUnits<Unit>()) {
             Vector3 destination = destinations.First();
             destinations.Remove(destination);
 

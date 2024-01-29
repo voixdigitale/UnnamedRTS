@@ -11,6 +11,7 @@ public enum ResourceType {
 public abstract class Resource : MonoBehaviour
 {
     protected ResourceType type;
+    
     public float quantity { get; protected set; }
 
     public static event Action OnResourceHarvested;
