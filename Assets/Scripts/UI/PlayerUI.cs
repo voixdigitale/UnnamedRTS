@@ -4,6 +4,7 @@ using TMPro;
 using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
+using System.Linq;
 
 public class PlayerUI : MonoBehaviour
 {
@@ -18,6 +19,9 @@ public class PlayerUI : MonoBehaviour
     [Header("Action Buttons")]
     public GameObject buildMenu;
     public GameObject actionButtonPrefab;
+
+    [Header("Messaging")]
+    public TextMeshProUGUI errorMessage;
 
     void Awake()
     {
@@ -52,7 +56,7 @@ public class PlayerUI : MonoBehaviour
 
                 ActionButton button = child.GetComponent<ActionButton>();
 
-                if (Input.GetKeyDown(button.GetShortcutKey())) {
+                if (Input.GetKeyUp(button.GetShortcutKey())) {
                     child.GetComponent<ActionButton>().OnClick();
                 }
             }
@@ -71,18 +75,35 @@ public class PlayerUI : MonoBehaviour
             Destroy(child.gameObject);
         }
 
-        if (selection == null) {
-            buildMenu.SetActive(false);
-        } else {
+        if (selection is Unit) {
             buildMenu.SetActive(true);
-            if (selection is Unit) {
-                foreach (ActionButtonSO action in ((Unit)selection).ActionButtons) {
-                    GameObject button = Instantiate(actionButtonPrefab, buildMenu.transform);
-                    button.GetComponent<ActionButton>().Setup(action, player);
-                }
+            foreach (ActionButtonSO action in ((Unit)selection).ActionButtons) {
+                GameObject button = Instantiate(actionButtonPrefab, buildMenu.transform);
+                button.GetComponent<ActionButton>().Setup(action, player);
             }
-            
+        } else if (selection is Building)  {
+            buildMenu.SetActive(true);
+            foreach (ActionButtonSO action in ((Building)selection).ActionButtons)
+            {
+                GameObject button = Instantiate(actionButtonPrefab, buildMenu.transform);
+                button.GetComponent<ActionButton>().Setup(action, player, selection);
+            }
+        } else {
+            buildMenu.SetActive(false);
         }
     }
     #nullable disable
+
+    public void ShowErrorMessage(string message)
+    {
+        errorMessage.text = message;
+        errorMessage.canvasRenderer.SetAlpha(1f);
+        StartCoroutine(Instance.ClearErrorMessage());
+    }
+
+    private IEnumerator ClearErrorMessage()
+    {
+        yield return new WaitForSeconds(2f);
+        errorMessage.CrossFadeAlpha(0f, 1f, false);
+    }
 }

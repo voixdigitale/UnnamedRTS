@@ -17,7 +17,7 @@ public class StopCommand : Command
         StopUnits();
     }
 
-    public override bool ValidateInput(RaycastHit? hit)
+    public override bool ValidateInput(RaycastHit? hit, object[] args)
     {
         return true;
     }

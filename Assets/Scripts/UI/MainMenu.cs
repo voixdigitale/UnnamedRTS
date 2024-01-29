@@ -79,7 +79,7 @@ public class MainMenu : MonoBehaviourPunCallbacks {
 
     private IEnumerator StartGame()
     {
-        int timer = 3;
+        int timer = 0;
 
         while (timer > 0)
         {

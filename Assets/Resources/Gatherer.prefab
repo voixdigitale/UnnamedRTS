@@ -258,6 +258,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 939ab708db8b309428f483921721c26f, type: 2}
   - {fileID: 11400000, guid: f2519f7c124766c47810aeefff2f62d3, type: 2}
   - {fileID: 11400000, guid: d5982ccf2f59bef4bac5ef6a27d98ea8, type: 2}
+  - {fileID: 11400000, guid: 6750dc108c1cfd64fbff4ec58aaa6ed2, type: 2}
   backpackResource: 0
   backpackQuantity: 0
   backpack: {fileID: 70618407216246093}

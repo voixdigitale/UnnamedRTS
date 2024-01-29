@@ -12,7 +12,7 @@ public abstract class Command {
     }
 
     public abstract void Execute();
-    public abstract bool ValidateInput(RaycastHit? hit);
+    public abstract bool ValidateInput(RaycastHit? hit, object[] args = null);
 
     public virtual IEnumerator CommandCoroutine() {
         yield return null;

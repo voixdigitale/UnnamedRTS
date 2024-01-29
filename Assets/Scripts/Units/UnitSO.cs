@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [Serializable]
-public struct UnitCost {
+public struct ProductionCost {
     public ResourceType Resource;
     public int Amount;
 }
@@ -16,7 +16,8 @@ public class UnitSO : ScriptableObject
     [SerializeField] float moveSpeed;
     [SerializeField] float health;
     [SerializeField] float maxHealth;
-    [SerializeField] List<UnitCost> unitCost;
+    [SerializeField] List<ProductionCost> unitCost;
+    [SerializeField] float timeToProduce;
     [SerializeField] GameObject unitPrefab;
 
     [Header("Gathering")]
@@ -36,7 +37,7 @@ public class UnitSO : ScriptableObject
     public float MoveSpeed { get => moveSpeed; }
     public float Health { get => health; }
     public float MaxHealth { get => maxHealth; }
-    public List<UnitCost> UnitCost { get => unitCost; }
+    public List<ProductionCost> UnitCost { get => unitCost; }
     public GameObject UnitPrefab { get => unitPrefab; }
     public float GatherAmount { get => gatherAmount; }
     public float GatherRate { get => gatherRate; }
@@ -45,4 +46,5 @@ public class UnitSO : ScriptableObject
     public float AttackRate { get => attackRate; }
     public Sprite UnitIcon { get => unitIcon; }
     public KeyCode Hotkey { get => hotkey; }
+    public float TimeToProduce { get => timeToProduce; }
 }

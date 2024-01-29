@@ -1,9 +1,11 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
 using System.Linq;
+using Unity.AI.Navigation;
 using Quaternion = UnityEngine.Quaternion;
 
 public class GameManager : MonoBehaviourPunCallbacks
@@ -21,12 +23,13 @@ public class GameManager : MonoBehaviourPunCallbacks
     [Header("Components")]
     [SerializeField] public RectTransform selectionBox; //The selection box UI element, needed for player initialization
     [SerializeField] public CameraController cameraControl;
+    [SerializeField] public NavMeshSurface navMeshSurface;
 
     private int playersInGame;
 
     void Awake() {
         Instance = this;
-        // PhotonNetwork.OfflineMode = true; //For testing
+        //PhotonNetwork.OfflineMode = true; //For testing
     }
 
     void Start()
@@ -49,5 +52,10 @@ public class GameManager : MonoBehaviourPunCallbacks
         GameObject playerObj = PhotonNetwork.Instantiate(playerPrefabPath, Vector3.zero, Quaternion.identity);
         PlayerController playerScript = playerObj.GetComponent<PlayerController>();
         playerScript.photonView.RPC("Initialize", RpcTarget.All, PhotonNetwork.LocalPlayer);
+    }
+
+    public void RefreshNavMesh()
+    {
+        navMeshSurface.BuildNavMesh();
     }
 }

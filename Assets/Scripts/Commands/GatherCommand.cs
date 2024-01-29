@@ -16,7 +16,7 @@ public class GatherCommand : Command
         GatherResource();
     }
 
-    public override bool ValidateInput(RaycastHit? inputHit) {
+    public override bool ValidateInput(RaycastHit? inputHit, object[] args) {
         if (!inputHit.HasValue)
             return false;
 

@@ -107,5 +107,8 @@ MonoBehaviour:
   layerMask:
     serializedVersion: 2
     m_Bits: 960
+  groundMask:
+    serializedVersion: 2
+    m_Bits: 128
   defaultCursor: {fileID: 2800000, guid: bfe1256c2b0d9384b907f2c55b2663f5, type: 3}
   pointerCursor: {fileID: 2800000, guid: 15ff4c96335d1584a882bc1813e7c9a3, type: 3}

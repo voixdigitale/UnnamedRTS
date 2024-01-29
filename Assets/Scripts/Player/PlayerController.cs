@@ -58,10 +58,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable {
         if (!photonView.IsMine) return;
 
         PlayerUI.Instance.Initialize(me);
-        GameObject buildingObj = PhotonNetwork.Instantiate(GameManager.Instance.baseBuildingPrefabPath, GameManager.Instance.spawnPoints[id - 1].position, Quaternion.identity);
-        Building buildingScript = buildingObj.GetComponent<Building>();
-        buildingScript.photonView.RPC("Initialize", photonPlayer, true);
-        buildingScript.photonView.RPC("Initialize",  RpcTarget.Others, false);
+        PlaceBuilding(GameManager.Instance.baseBuildingPrefabPath, GameManager.Instance.spawnPoints[id - 1].position);
         cameraControl.MoveCameraTo(GameManager.Instance.spawnPoints[id - 1].position);
 
         // Give the player 2 gatherers
@@ -87,6 +84,24 @@ public class PlayerController : MonoBehaviourPun, IPunObservable {
                 break;
         }
         OnResourceCollected?.Invoke();
+    }
+
+    public bool RemoveResource(ResourceType type, int amount)
+    {
+        switch (type)
+        {
+            case ResourceType.Wood:
+                if (wood < amount)
+                    return false;
+                wood -= amount;
+                break;
+            case ResourceType.Scrap:
+                if (scrap < amount)
+                    return false;
+                scrap -= amount;
+                break;
+        }
+        return true;
     }
 
     public int GetResource(ResourceType type)
@@ -135,5 +150,24 @@ public class PlayerController : MonoBehaviourPun, IPunObservable {
 
     public PlayerController GetOtherPlayer(PlayerController player) {
         return player == me ? enemy : me;
+    }
+
+    public bool HasEnoughResources(List<ProductionCost> cost)
+    {
+        foreach (ProductionCost unitCost in cost)
+        {
+            if (GetResource(unitCost.Resource) < unitCost.Amount)
+                return false;
+        }
+
+        return true;
+    }
+
+    public void PlaceBuilding(string prefabPath, Vector3 position)
+    {
+        GameObject buildingObj = PhotonNetwork.Instantiate(prefabPath, position, Quaternion.identity);
+        Building buildingScript = buildingObj.GetComponent<Building>();
+        buildingScript.photonView.RPC("Initialize", photonPlayer, true);
+        buildingScript.photonView.RPC("Initialize", RpcTarget.Others, false);
     }
 }

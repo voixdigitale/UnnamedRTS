@@ -16,7 +16,7 @@ public class AttackCommand : Command
         return;
     }
 
-    public override bool ValidateInput(RaycastHit? inputHit) {
+    public override bool ValidateInput(RaycastHit? inputHit, object[] args) {
         if (!inputHit.HasValue)
             return false;
         RaycastHit hit = (RaycastHit)inputHit;

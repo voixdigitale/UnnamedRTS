@@ -73,11 +73,19 @@ public abstract class Unit : MonoBehaviourPun, ISelectable
     }
 
     public void SetAgentDestination(Vector3 destination) {
+        //Check if the agent has been placed in a navmesh
+        if (!agent.isOnNavMesh)
+        {
+            Debug.LogError("Agent " + gameObject.name + " is not on a navmesh!");
+            return;
+        }
+
         agent.isStopped = false;
         agent.speed = unitData.MoveSpeed;
         agent.speed = Random.Range(agent.speed - 0.1f, agent.speed + 0.1f); //Add a bit of randomness to the speed
         agent.SetDestination(destination);
         SetState(UnitState.Moving);
+
     }
     public void Select()
     {

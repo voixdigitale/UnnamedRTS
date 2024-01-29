@@ -15,14 +15,23 @@ public class ActionButton : MonoBehaviour
     private KeyCode shortcutKey;
     private PlayerController _playerController;
     private CommandManager commandManager;
+    private UnitSO unitData;
+    private BuildingSO buildingData;
+    private Building selectedBuilding;
 
-    public void Setup(ActionButtonSO config, PlayerController playerController) {
+    public void Setup(ActionButtonSO config, PlayerController playerController, ISelectable selection = null) {
         iconImage.sprite = config.Icon;
         shortcutText.text = config.ShortcutKey.ToString();
-        methodName = config.name + "Command";
+        methodName = (config.UnitData is null ? config.name : "BuildUnit") + "Command";
         shortcutKey = config.ShortcutKey;
         this._playerController = playerController;
         commandManager = playerController.GetComponent<CommandManager>();
+        unitData = config.UnitData;
+        buildingData = config.BuildingData;
+        if (selection is not null and Building)
+        {
+            selectedBuilding = (Building)selection;
+        }
     }
 
     public void OnClick() {
@@ -37,8 +46,17 @@ public class ActionButton : MonoBehaviour
             return;
         }
 
-        Command command = (Command)Activator.CreateInstance(commandType, new System.Object[] { _playerController });
+        Command command;
 
+        if (buildingData != null) {
+            command = (Command)Activator.CreateInstance(commandType, new object[] { _playerController, buildingData });
+        } else if (unitData != null) {
+            command = (Command)Activator.CreateInstance(commandType, new object[] { _playerController, unitData, selectedBuilding });
+        } else { 
+            command = (Command)Activator.CreateInstance(commandType, new object[] { _playerController });
+        }
+
+        Debug.Log($"Executing command {command.GetType().Name}.");
         commandManager.SetCommand(command);
     }
 

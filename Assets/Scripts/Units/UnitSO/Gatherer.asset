@@ -18,7 +18,8 @@ MonoBehaviour:
   maxHealth: 50
   unitCost:
   - Resource: 1
-    Amount: 10
+    Amount: 50
+  timeToProduce: 10
   unitPrefab: {fileID: 1096112807828452666, guid: 6f41256152793dc4bab2a0e8bf8bcc90,
     type: 3}
   gatherAmount: 10
