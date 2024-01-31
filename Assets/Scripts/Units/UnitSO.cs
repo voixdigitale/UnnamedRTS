@@ -14,8 +14,8 @@ public class UnitSO : ScriptableObject
     [Header("General")]
     [SerializeField] string unitName;
     [SerializeField] float moveSpeed;
-    [SerializeField] float health;
-    [SerializeField] float maxHealth;
+    [SerializeField] int health;
+    [SerializeField] int maxHealth;
     [SerializeField] List<ProductionCost> unitCost;
     [SerializeField] float timeToProduce;
     [SerializeField] GameObject unitPrefab;
@@ -26,7 +26,7 @@ public class UnitSO : ScriptableObject
 
     [Header("Combat")]
     [SerializeField] float attackRange;
-    [SerializeField] float attackDamage;
+    [SerializeField] int attackDamage;
     [SerializeField] float attackRate;
 
     [Header("UI")]
@@ -35,14 +35,14 @@ public class UnitSO : ScriptableObject
 
     public string UnitName { get => unitName; }
     public float MoveSpeed { get => moveSpeed; }
-    public float Health { get => health; }
-    public float MaxHealth { get => maxHealth; }
+    public int Health { get => health; }
+    public int MaxHealth { get => maxHealth; }
     public List<ProductionCost> UnitCost { get => unitCost; }
     public GameObject UnitPrefab { get => unitPrefab; }
     public float GatherAmount { get => gatherAmount; }
     public float GatherRate { get => gatherRate; }
     public float AttackRange { get => attackRange; }
-    public float AttackDamage { get => attackDamage; }
+    public int AttackDamage { get => attackDamage; }
     public float AttackRate { get => attackRate; }
     public Sprite UnitIcon { get => unitIcon; }
     public KeyCode Hotkey { get => hotkey; }

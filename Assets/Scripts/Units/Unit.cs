@@ -18,7 +18,7 @@ public enum UnitState
     Gathering
 }
 
-public abstract class Unit : MonoBehaviourPun, ISelectable
+public abstract class Unit : MonoBehaviourPun, ISelectable, IDamageable
 {
     public event Action<UnitState> OnStateChanged;
 
@@ -38,6 +38,9 @@ public abstract class Unit : MonoBehaviourPun, ISelectable
     protected NavMeshAgent agent;
 
     protected Transform target;
+    protected float currentHealth;
+    protected float maxHealth;
+    protected float lastAttackTime;
 
 
     [PunRPC]
@@ -50,6 +53,8 @@ public abstract class Unit : MonoBehaviourPun, ISelectable
             homeBase = (HomeBuilding) PlayerController.enemy.buildings[0];
         }
         
+        currentHealth = maxHealth = unitData.MaxHealth;
+
         player.units.Add(this);
     }
 
@@ -72,7 +77,10 @@ public abstract class Unit : MonoBehaviourPun, ISelectable
         }
     }
 
-    public void SetAgentDestination(Vector3 destination) {
+    public void SetAgentDestination(Vector3 destination)
+    {
+        if (agent == null) return;
+
         //Check if the agent has been placed in a navmesh
         if (!agent.isOnNavMesh)
         {
@@ -131,7 +139,19 @@ public abstract class Unit : MonoBehaviourPun, ISelectable
     }
 
     protected virtual void AttackUpdate() {
-        if (target == null) SetState(UnitState.Idle);
+        if (target == null)
+        {
+            SetState(UnitState.Idle);
+            return;
+        }
+        
+        if (lastAttackTime + unitData.AttackRate < Time.time && target.GetComponent<IDamageable>() != null)
+        {
+            transform.LookAt(target);
+            Debug.Log("Unit " + gameObject.name + " attacking " + target.name);
+            target.gameObject.GetPhotonView().RPC("TakeDamage", RpcTarget.All, unitData.AttackDamage);
+            lastAttackTime = Time.time;
+        }
 
         if (target != null && Vector3.Distance(transform.position, target.position) > unitData.AttackRange) {
             SetAgentDestination(target.position);
@@ -154,5 +174,24 @@ public abstract class Unit : MonoBehaviourPun, ISelectable
         SetState(UnitState.Idle);
     }
 
+    [PunRPC]
+    public void TakeDamage(int damage)
+    {
+        if (!photonView.IsMine) return;
+
+        Debug.Log("Unit " + gameObject.name + " took " + damage + " damage from "+ player.name);
+
+        currentHealth -= damage;
+        if (currentHealth <= 0)
+        {
+            Die();
+        }
+    }
+
+    protected virtual void Die()
+    {
+        player.units.Remove(this);
+        PhotonNetwork.Destroy(gameObject);
+    }
     public ActionButtonSO[] ActionButtons => unitActionUI;
 }
