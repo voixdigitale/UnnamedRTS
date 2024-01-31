@@ -827,9 +827,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7071740998304281114}
-  - component: {fileID: 6812848820368198714}
   - component: {fileID: 780415843227436465}
   - component: {fileID: 2095345038263943401}
+  - component: {fileID: 6975239905286125231}
   m_Layer: 9
   m_Name: Building
   m_TagString: Building
@@ -858,27 +858,6 @@ Transform:
   - {fileID: 1738945041021758498}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6812848820368198714
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6632738451788158474}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 46a6de5e7f2dfa040b8795a64eeb4ded, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  exitPos: {fileID: 4357773116712418941}
-  entrancePos: {fileID: 1738945041021758498}
-  unloadTime: 1
-  selectionCircle: {fileID: 2798393853891862814}
-  buildingActionUI:
-  - {fileID: 11400000, guid: 94203d973ee619e47a2e504dbe860d6c, type: 2}
-  buildingBar: {fileID: 5938620712289526227}
-  buildingProgress: {fileID: 6572661388990282902}
-  <player>k__BackingField: {fileID: 0}
 --- !u!65 &780415843227436465
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -922,6 +901,28 @@ MonoBehaviour:
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
+--- !u!114 &6975239905286125231
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6632738451788158474}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd5f64449724554408a6a49e2d20cc92, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  selectionCircle: {fileID: 2798393853891862814}
+  buildingData: {fileID: 0}
+  buildingActionUI:
+  - {fileID: 11400000, guid: 94203d973ee619e47a2e504dbe860d6c, type: 2}
+  buildingBar: {fileID: 5938620712289526227}
+  buildingProgress: {fileID: 6572661388990282902}
+  <player>k__BackingField: {fileID: 0}
+  exitPos: {fileID: 4357773116712418941}
+  entrancePos: {fileID: 1738945041021758498}
+  unloadTime: 1
 --- !u!1 &7765063810360202512
 GameObject:
   m_ObjectHideFlags: 0

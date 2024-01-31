@@ -7,12 +7,11 @@ using Unity.VisualScripting;
 using UnityEngine.UI;
 using System;
 
-public class Building : MonoBehaviourPunCallbacks, ISelectable
+public abstract class Building : MonoBehaviourPunCallbacks, ISelectable
 {
-    [SerializeField] private Transform exitPos;
-    [SerializeField] private Transform entrancePos;
-    [SerializeField] private float unloadTime = 1f;
+    
     [SerializeField] private GameObject selectionCircle;
+    [SerializeField] private BuildingSO buildingData;
     [SerializeField] private ActionButtonSO[] buildingActionUI;
 
     [Header("UI")]
@@ -22,8 +21,6 @@ public class Building : MonoBehaviourPunCallbacks, ISelectable
     [field: SerializeField]
     public PlayerController player { get; private set; }
 
-    private List<Gatherer> unitsInside = new List<Gatherer>();
-    private List<float> timesOfArrival = new List<float>();
     private bool isBusy = false;
 
     [PunRPC]
@@ -36,36 +33,6 @@ public class Building : MonoBehaviourPunCallbacks, ISelectable
         }
         player.buildings.Add(this);
         GameManager.Instance.RefreshNavMesh();
-    }
-
-    void StoreUnit(Gatherer unit) {
-        unitsInside.Add(unit);
-        timesOfArrival.Add(Time.time);
-        unit.gameObject.SetActive(false);
-    }
-
-    private void Update() {
-        for (int i = 0; i < unitsInside.Count; i++) {
-            if (Time.time - timesOfArrival[i] > unloadTime) {
-                unitsInside[i].transform.position = exitPos.position;
-                unitsInside[i].gameObject.SetActive(true);
-                unitsInside[i].UnloadBackPack();
-                unitsInside.RemoveAt(i);
-                timesOfArrival.RemoveAt(i);
-            }
-        }
-    }
-
-    private void OnTriggerEnter(Collider other) {
-        Gatherer unit = other.GetComponent<Gatherer>();
-
-        if (unit != null) {
-            StoreUnit(unit);
-        }
-    }
-
-    public Vector3 GetEntrance() {
-        return entrancePos.position;
     }
 
     public void Select() {

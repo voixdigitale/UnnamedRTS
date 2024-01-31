@@ -12,9 +12,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     public static NetworkManager instance;
 
-    private float maxTimeout = 5f;
-    private float timeout = 0f;
-
     private void Awake() {
         if (instance != null && instance != this)
         {

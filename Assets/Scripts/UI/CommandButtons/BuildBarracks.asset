@@ -16,3 +16,4 @@ MonoBehaviour:
   shortcutKey: 98
   unitData: {fileID: 0}
   buildingData: {fileID: 11400000, guid: dc739d66e49277b4e93e21f1ebc312ca, type: 2}
+  description: Build a command center for ranged soldiers (100W 100S)

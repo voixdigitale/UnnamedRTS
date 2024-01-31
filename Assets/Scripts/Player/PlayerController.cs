@@ -163,6 +163,22 @@ public class PlayerController : MonoBehaviourPun, IPunObservable {
         return true;
     }
 
+    public void TryPlaceBuilding(BuildingSO building, Vector3 position) {
+        if (HasEnoughResources(building.BuildingCost))
+        {
+            foreach (ProductionCost cost in building.BuildingCost)
+            {
+                RemoveResource(cost.Resource, cost.Amount);
+            }
+
+            PlaceBuilding(building.BuildingPath, position);
+        } else
+        {
+            PlayerUI.Instance.ShowErrorMessage("Not enough resources!");
+        }
+
+    }
+
     public void PlaceBuilding(string prefabPath, Vector3 position)
     {
         GameObject buildingObj = PhotonNetwork.Instantiate(prefabPath, position, Quaternion.identity);

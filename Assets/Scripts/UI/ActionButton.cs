@@ -5,11 +5,14 @@ using UnityEngine;
 using UnityEngine.UI;
 using System;
 using System.Reflection;
+using Unity.VisualScripting.FullSerializer;
 
 public class ActionButton : MonoBehaviour
 {
     [SerializeField] private Image iconImage;
     [SerializeField] private TextMeshProUGUI shortcutText;
+    [SerializeField] private GameObject tooltip;
+    [SerializeField] private TextMeshProUGUI tooltipText;
 
     private string methodName;
     private KeyCode shortcutKey;
@@ -18,6 +21,7 @@ public class ActionButton : MonoBehaviour
     private UnitSO unitData;
     private BuildingSO buildingData;
     private Building selectedBuilding;
+    private string description;
 
     public void Setup(ActionButtonSO config, PlayerController playerController, ISelectable selection = null) {
         iconImage.sprite = config.Icon;
@@ -28,6 +32,8 @@ public class ActionButton : MonoBehaviour
         commandManager = playerController.GetComponent<CommandManager>();
         unitData = config.UnitData;
         buildingData = config.BuildingData;
+        description = config.Description;
+
         if (selection is not null and Building)
         {
             selectedBuilding = (Building)selection;
@@ -60,7 +66,18 @@ public class ActionButton : MonoBehaviour
         commandManager.SetCommand(command);
     }
 
+    //Show tooltip when hovering over the button
+    public void OnPointerEnter()
+    {
+        tooltip.SetActive(true);
+        tooltipText.text = description;
+        
+    }
 
+    public void OnPointerExit()
+    {
+        tooltip.SetActive(false);
+    }
 
     public KeyCode GetShortcutKey() {
         return shortcutKey;

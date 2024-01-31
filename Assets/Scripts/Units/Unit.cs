@@ -24,7 +24,7 @@ public abstract class Unit : MonoBehaviourPun, ISelectable
 
     [field: SerializeField]
     public PlayerController player { get; protected set;}
-    public Building homeBase;
+    public HomeBuilding homeBase;
 
     [Header("Unit Setup")]
     [SerializeField] protected GameObject selectionCircle;
@@ -44,10 +44,10 @@ public abstract class Unit : MonoBehaviourPun, ISelectable
     public void Initialize(bool isMine) {
         if (isMine) {
             player = PlayerController.me;
-            homeBase = PlayerController.me.buildings[0];
+            homeBase = (HomeBuilding) PlayerController.me.buildings[0];
         } else {
             player = PlayerController.enemy;
-            homeBase = PlayerController.enemy.buildings[0];
+            homeBase = (HomeBuilding) PlayerController.enemy.buildings[0];
         }
         
         player.units.Add(this);

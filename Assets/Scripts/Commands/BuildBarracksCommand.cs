@@ -30,7 +30,7 @@ public class BuildBarracksCommand : Command, IPlaceable
 
     public override void Execute()
     {
-        player.PlaceBuilding(buildingData.BuildingPath, placementPosition);
+        player.TryPlaceBuilding(buildingData, placementPosition);
     }
     public BuildingSO GetBuildingData()
     {

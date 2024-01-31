@@ -14,7 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 500
   maxHealth: 500
-  buildingCost: []
+  buildingCost:
+  - Resource: 1
+    Amount: 100
+  - Resource: 2
+    Amount: 100
   timeToProduce: 15
   buildingPreview: {fileID: 6632738451788158474, guid: ced4f60f152efef47b03a9db4ccd2111,
     type: 3}

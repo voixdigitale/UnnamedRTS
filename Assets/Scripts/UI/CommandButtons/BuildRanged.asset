@@ -16,3 +16,4 @@ MonoBehaviour:
   shortcutKey: 114
   unitData: {fileID: 11400000, guid: c4805107432cee449a53dbee6bb9144a, type: 2}
   buildingData: {fileID: 0}
+  description: Recruit a ranged soldier (50W 50S)
