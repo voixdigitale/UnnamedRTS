@@ -29,5 +29,6 @@ MonoBehaviour:
   attackRange: 6
   attackDamage: 3
   attackRate: 0.4
+  sightRange: 10
   unitIcon: {fileID: 21300000, guid: 0d62ef8f141f708438f11243f83854ca, type: 3}
   hotkey: 114

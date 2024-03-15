@@ -6,6 +6,7 @@ using Photon.Realtime;
 using Unity.VisualScripting;
 using UnityEngine.UI;
 using System;
+using FischlWorks_FogWar;
 
 public abstract class Building : MonoBehaviourPunCallbacks, ISelectable
 {
@@ -28,6 +29,7 @@ public abstract class Building : MonoBehaviourPunCallbacks, ISelectable
     {
         if (isMine) {
             player = PlayerController.me;
+            GameManager.Instance.fogWar.AddFogRevealer(new csFogWar.FogRevealer(transform, 15, false));
         } else {
             player = PlayerController.enemy;
         }

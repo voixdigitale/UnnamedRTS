@@ -1,14 +1,23 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 public class CameraController : MonoBehaviour {
     public float moveSpeed = 10f;
     public float zoomSpeed = 20f;
 
+    public float edgeSize = 10f;
+
     public float minZoom = 5f;
     public float maxZoom = 200f;
 
+    float minLimitX = -75;
+    float maxLimitX = 45;
+    float minLimitY = -50;
+    float maxLimitY = 4;
+
+    
     private new Camera camera;
     private Vector3 cameraOffset;
 
@@ -31,26 +40,32 @@ public class CameraController : MonoBehaviour {
     // Move the camera by moving the mouse to the edges of the screen
     void MoveCameraWithMouse()
     {
+        #if UNITY_EDITOR
+                if (Input.mousePosition.x == 0 || Input.mousePosition.y == 0 || Input.mousePosition.x >= Handles.GetMainGameViewSize().x - 1 || Input.mousePosition.y >= Handles.GetMainGameViewSize().y - 1) return;
+        #else
+            if (Input.mousePosition.x == 0 || Input.mousePosition.y == 0 || Input.mousePosition.x >= Screen.width - 1 || Input.mousePosition.y >= Screen.height - 1) return;
+        #endif
+
         float horizontal = 0;
         float vertical = 0;
+        Vector3 position = transform.position;
 
-        if (Input.mousePosition.x < 5)
+        if (Input.mousePosition.x < edgeSize && position.x > minLimitX)
         {
             horizontal -= 1;
-        } else if (Input.mousePosition.x > Screen.width - 5)
+        } else if (Input.mousePosition.x > Screen.width - edgeSize && position.x < maxLimitX)
         {
             horizontal += 1;
         }
 
-        if (Input.mousePosition.y < 5)
+        if (Input.mousePosition.y < edgeSize && position.z > minLimitY)
         {
             vertical -= 1;
-        } else if (Input.mousePosition.y > Screen.height - 5)
+        } else if (Input.mousePosition.y > Screen.height - edgeSize && position.z < maxLimitY)
         {
             vertical += 1;
         }
 
-        Vector3 position = transform.position;
         position.x += horizontal * moveSpeed * Time.deltaTime;
         position.z += vertical * moveSpeed * Time.deltaTime;
 

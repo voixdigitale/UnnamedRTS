@@ -28,6 +28,7 @@ public class UnitSO : ScriptableObject
     [SerializeField] float attackRange;
     [SerializeField] int attackDamage;
     [SerializeField] float attackRate;
+    [SerializeField] int sightRange;
 
     [Header("UI")]
     [SerializeField] Sprite unitIcon;
@@ -47,4 +48,5 @@ public class UnitSO : ScriptableObject
     public Sprite UnitIcon { get => unitIcon; }
     public KeyCode Hotkey { get => hotkey; }
     public float TimeToProduce { get => timeToProduce; }
+    public int SightRange { get => sightRange; }
 }

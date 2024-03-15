@@ -5,6 +5,7 @@ using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
 using System.Linq;
+using FischlWorks_FogWar;
 using Unity.AI.Navigation;
 using Quaternion = UnityEngine.Quaternion;
 
@@ -24,6 +25,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     [SerializeField] public RectTransform selectionBox; //The selection box UI element, needed for player initialization
     [SerializeField] public CameraController cameraControl;
     [SerializeField] public NavMeshSurface navMeshSurface;
+    [SerializeField] public csFogWar fogWar;
 
     private int playersInGame;
 

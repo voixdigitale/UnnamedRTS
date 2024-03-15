@@ -9,7 +9,7 @@ public class AttackCommand : Command
         IsCoroutine = false;
     }
 
-    private Unit target;
+    private Transform target;
 
     public override void Execute() {
         AttackUnit(target);
@@ -21,8 +21,8 @@ public class AttackCommand : Command
             return false;
         RaycastHit hit = (RaycastHit)inputHit;
 
-        if (hit.collider.gameObject.CompareTag("Unit")) {
-            target = hit.collider.GetComponent<Unit>();
+        if (hit.collider.gameObject.CompareTag("Unit") || hit.collider.gameObject.CompareTag("Zombie")) {
+            target = hit.collider.transform;
 
             return true;
         }
@@ -30,10 +30,10 @@ public class AttackCommand : Command
         return false;
     }
 
-    void AttackUnit(Unit target) {
-        player.SpawnSelectionMarker(target.transform.position, 1f, Color.red);
+    void AttackUnit(Transform target) {
+        player.SpawnSelectionMarker(target.position, 1f, Color.red);
 
-        List<Vector3> destinations = UnitPlacements.GetSurroundingDestinations(target.transform.position, player.GetCurrentSelectedCount<Unit>());
+        List<Vector3> destinations = UnitPlacements.GetSurroundingDestinations(target.position, player.GetCurrentSelectedCount<Unit>());
 
         foreach (Unit attacker in player.GetSelectedUnits<Unit>()) {
             Vector3 destination = destinations.First();

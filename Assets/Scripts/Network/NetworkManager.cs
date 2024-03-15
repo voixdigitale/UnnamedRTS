@@ -11,6 +11,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 {
 
     public static NetworkManager instance;
+    public int maxPlayers = 2;
 
     private void Awake() {
         if (instance != null && instance != this)
@@ -45,7 +46,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         var o = new RoomOptions();
         o.IsVisible = true;
         o.IsOpen = true;
-        o.MaxPlayers = 1;
+        o.MaxPlayers = maxPlayers;
         PhotonNetwork.CreateRoom(null, o, null);
     }
 

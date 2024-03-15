@@ -6,6 +6,8 @@ using UnityEngine.Rendering;
 using Random = UnityEngine.Random;
 using Photon.Pun;
 using Photon.Realtime;
+using FischlWorks_FogWar;
+using static FischlWorks_FogWar.csFogWar;
 
 public enum UnitState
 {
@@ -20,6 +22,8 @@ public enum UnitState
 
 public abstract class Unit : MonoBehaviourPun, ISelectable, IDamageable
 {
+    public static event Action<Unit, int> OnDamageTaken;
+
     public event Action<UnitState> OnStateChanged;
 
     [field: SerializeField]
@@ -41,6 +45,7 @@ public abstract class Unit : MonoBehaviourPun, ISelectable, IDamageable
     protected float currentHealth;
     protected float maxHealth;
     protected float lastAttackTime;
+    protected int fogRevealerID;
 
 
     [PunRPC]
@@ -48,6 +53,7 @@ public abstract class Unit : MonoBehaviourPun, ISelectable, IDamageable
         if (isMine) {
             player = PlayerController.me;
             homeBase = (HomeBuilding) PlayerController.me.buildings[0];
+            fogRevealerID = GameManager.Instance.fogWar.AddFogRevealer(new csFogWar.FogRevealer(transform, unitData.SightRange, false));
         } else {
             player = PlayerController.enemy;
             homeBase = (HomeBuilding) PlayerController.enemy.buildings[0];
@@ -68,7 +74,6 @@ public abstract class Unit : MonoBehaviourPun, ISelectable, IDamageable
     {
         state = newState;
         OnStateChanged?.Invoke(newState);
-        Debug.Log("Unit "+ gameObject.name + "changed to " + newState);
 
         if (newState == UnitState.Idle)
         {
@@ -134,7 +139,9 @@ public abstract class Unit : MonoBehaviourPun, ISelectable, IDamageable
         agent.destination = target.position;
 
         if (Vector3.Distance(transform.position, agent.destination) <= unitData.AttackRange) {
+            agent.isStopped = true;
             SetState(UnitState.Attacking);
+            lastAttackTime = Time.time;
         }
     }
 
@@ -148,7 +155,6 @@ public abstract class Unit : MonoBehaviourPun, ISelectable, IDamageable
         if (lastAttackTime + unitData.AttackRate < Time.time && target.GetComponent<IDamageable>() != null)
         {
             transform.LookAt(target);
-            Debug.Log("Unit " + gameObject.name + " attacking " + target.name);
             target.gameObject.GetPhotonView().RPC("TakeDamage", RpcTarget.All, unitData.AttackDamage);
             lastAttackTime = Time.time;
         }
@@ -159,12 +165,12 @@ public abstract class Unit : MonoBehaviourPun, ISelectable, IDamageable
         }
     }
 
-    public virtual void Attack(Unit objective, Vector3 destination) {
+    public virtual void Attack(Transform objective, Vector3 destination) {
         agent.isStopped = false;
         agent.speed = Random.Range(agent.speed - 0.1f, agent.speed + 0.1f); //Add a bit of randomness to the speed
         agent.SetDestination(destination);
 
-        target = objective.transform;
+        target = objective;
         SetState(UnitState.MovingToAttack);
     }
 
@@ -179,9 +185,9 @@ public abstract class Unit : MonoBehaviourPun, ISelectable, IDamageable
     {
         if (!photonView.IsMine) return;
 
-        Debug.Log("Unit " + gameObject.name + " took " + damage + " damage from "+ player.name);
-
         currentHealth -= damage;
+        OnDamageTaken?.Invoke(this, damage);
+        
         if (currentHealth <= 0)
         {
             Die();
@@ -190,6 +196,7 @@ public abstract class Unit : MonoBehaviourPun, ISelectable, IDamageable
 
     protected virtual void Die()
     {
+        GameManager.Instance.fogWar.RemoveFogRevealer(fogRevealerID);
         player.units.Remove(this);
         PhotonNetwork.Destroy(gameObject);
     }

@@ -23,6 +23,9 @@ public class PlayerUI : MonoBehaviour
     [Header("Messaging")]
     public TextMeshProUGUI errorMessage;
 
+    [Header("Floating Text")]
+    public GameObject floatingTextPrefab;
+
     void Awake()
     {
         //Show the cursor (useful for debugging between windows)
@@ -34,12 +37,14 @@ public class PlayerUI : MonoBehaviour
     {
         PlayerController.OnResourceCollected += HandleOnResourceCollected;
         SelectionManager.OnSelectionChanged += HandleOnSelectionChanged;
+        Unit.OnDamageTaken += ShowFloatingText;
     }
 
     public void OnDisable()
     {
         PlayerController.OnResourceCollected -= HandleOnResourceCollected;
         SelectionManager.OnSelectionChanged -= HandleOnSelectionChanged;
+        Unit.OnDamageTaken -= ShowFloatingText;
     }
 
     public void Initialize(PlayerController player) {
@@ -105,5 +110,12 @@ public class PlayerUI : MonoBehaviour
     {
         yield return new WaitForSeconds(2f);
         errorMessage.CrossFadeAlpha(0f, 1f, false);
+    }
+
+    public void ShowFloatingText(Unit unit, int amount)
+    {
+        GameObject floatingTextObj = Instantiate(floatingTextPrefab, unit.transform.position, Quaternion.identity);
+        FloatingText floatingText = floatingTextObj.GetComponent<FloatingText>();
+        floatingText.Setup(amount.ToString(), Color.red);
     }
 }
